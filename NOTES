@@ -1,0 +1,66 @@
+$Id: NOTES,v 1.4 2006/08/09 11:22:25 ianmacd Exp $
+
+
+0.9.7
+-----
+
+LDAP_MOD_DELETE and LDAP_MOD_REPLACE were reversed in win/winldap.h, so
+deletion and replacement operations did not work on Win32 systems.
+
+
+0.9.6
+-----
+
+A segfault on FreeBSD when using AMD64 was fixed for this release.
+
+The only other changes are minor clarifications of the documentation.
+
+
+0.9.5
+-----
+
+The Windows build is now believed to work out of the box. It has been tested
+on Windows XP SP2, using SVC C++ 6.0 to build the software. Thanks to Chris
+Scharf <scharfie@gmail.com> for his work in this area and willingness to work
+with me on fixing the problems.
+
+
+0.9.4
+-----
+
+LDAP::Conn#search, LDAP::Conn#search2, LDAP::Conn#search_ext and
+LDAP::Conn#search_ext2 have been modified to treat LDAP_SIZELIMIT_EXCEEDED as
+success.
+
+After using any of these four methods, the user should use LDAP::Conn#err to
+check whether the error status of the Conn object is
+LDAP::LDAP_SIZELIMIT_EXCEEDED. If true, the results set has been truncated by
+the server.
+
+Previously, LDAP_SIZELIMIT_EXCEEDED would raise an exception and no results
+would be returned, which is not the correct behaviour if the user has
+deliberately put a limit on the number of results to be returned, as might be
+done in order to spare the server.
+
+
+0.9.3
+-----
+
+The usability of the library on Windows platforms is currently a case of 'suck
+it and see'. Some people report the code working, others report immediate
+segfaults; yet others say that it worked after they made some minor
+alterations to the code in order to get it to build.
+
+Differences in Windows platform used, chosen compiler and version, plus the
+variety of servers with which the code is used, conspire to result in the
+exact facts of the matter not yet having been ascertained.
+
+Most people seemed to experience some difficulty in getting the code to build
+on Windows, so some effort has gone into making this better for the 0.9.3
+release. This work is difficult, since I do not have a Windows build
+environment at my disposal.
+
+If you are a Windows user and you found that the code did not work in its
+original form, but you managed to get it to work after some alterations, I
+would be very grateful if you wrote to me to let me know what changes were
+needed. Please include precise details of your build platform.

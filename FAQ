@@ -1,0 +1,62 @@
+$Id: FAQ,v 1.6 2006/04/25 08:43:12 ianmacd Exp $
+
+
+FAQ
+---
+
+Q. How do I add/modify binary data?
+
+A. Create a LDAP::Mod object with the flag LDAP::LDAP_MOD_BVALUES as follows:
+
+   entry = [
+     LDAP::mod(LDAP::LDAP_MOD_ADD|LDAP_MOD_BVALUES, 'jpegPhoto', [jpeg_img]),
+     LDAP::mod(LDAP::LDAP_MOD_ADD, 'cn', ['Takaaki Tateishi']),
+     ...
+   ]
+   conn.add("dc=localhost, dc=localdomain", entry)
+
+
+
+Q. Is there shortcut method for adding/modifying entries.
+
+A. Yes, there is. You can directly give LDAP::Conn#add/modify hash data as
+   follows:
+
+   entry = {
+     'objectclass' => [ 'top', 'person' ],
+     ...
+   }
+   conn.add( "cn=foobar, dc=localhost, dc=localdomain", entry )
+
+
+
+Q. Can I use SASL authentication?
+
+A. Yes, it works for me using Cyrus SASL and Kerberos V via GSSAPI.
+   Use LDAP::Conn#sasl_bind. Your mileage may vary.
+
+
+
+Q. Can I put a limit on the number of results returned by the server?
+
+A. Yes, as of version 0.9.4, you can. Set the size limit using
+   LDAP::Conn#set_option and then check for LDAP::Conn#search or
+   LDAP::Conn#search2 having exceeded this limit, by using LDAP::Conn#err:
+
+     conn = LDAP::Conn.new( 'localhost', 389 )
+
+     # Limit the results set to a maximum of 10.
+     conn.set_option( LDAP::LDAP_OPT_SIZELIMIT, 10 )
+
+     conn.search2( 'dc=localhost,dc=localdomain',
+         	  LDAP::LDAP_SCOPE_SUBTREE, '(objectClass=*)' )
+
+     if conn.err == LDAP::LDAP_SIZELIMIT_EXCEEDED
+       # Results set was truncated by server.
+     end
+
+   Note that LDAP::LDAP_SIZELIMIT_EXCEEDED may occur even when you have not
+   put an explicit limit on the number of results to be returned. The server
+   will likely have its own maximum configured, so it can be important to
+   check for this condition on all of your calls to LDAP::Conn#search and
+   LDAP::Conn#search2.

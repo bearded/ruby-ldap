@@ -1,0 +1,5 @@
+version: 1
+# This contains a fake control with a binary value.
+dn: ou=Product Development, dc=airius, dc=com
+control: 1.2.3.4 false:: 5Za25qWt6YOoIOmDqOmVtw==
+changetype: delete

@@ -1,0 +1,15 @@
+							-*- text -*-
+
+To-do list
+----------
+
+- Support for more LDAPv3 controls and extensions.
+
+- DSML support.
+
+- (?) adding ldap_url_search_s(), ldap_url_search_st() and
+  ldap_is_ldap_url()
+
+- Asynchronous functions.
+
+- Correctly implement SASL functions.

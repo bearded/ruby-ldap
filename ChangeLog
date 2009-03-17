@@ -1,0 +1,744 @@
+Wed Aug  9 11:23:04 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.7.
+
+Tue Aug  8 14:36:15 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* win/winldap.h: LDAP_MOD_DELETE and LDAP_MOD_REPLACE had their values
+	  transposed. Thanks to Adam Doligalski <adam@doligalski.com>.
+
+Tue Aug  1 00:12:33 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.6.
+
+Tue Aug  1 00:07:53 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c: Minor documentation clarifications.
+
+Mon Jul 31 00:38:03 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c: Make clear in documentation that LDAP::Conn#search2 and
+	  LDAP::Conn#search_ext2 pass each entry into the block as a hash.
+
+Mon Jul  3 22:54:52 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* misc.c (Init_ldap_misc): A segmentation fault occurs in ldap.so on
+	  FreeBSD when running on AMD64. Change last parameter in
+	  rb_struct_define() to be NULL, not 0. Thanks to Mark Kittisopikul
+	  <markkitt@uchicago.edu> and Jan Mikkelsen <janm@transactionware.com>.
+
+Thu Apr 20 16:47:00 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.5.
+
+Thu Apr 20 16:39:46 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_compare_ext_s): The call to ldap_compare_ext_s()
+	  requires an extra argument on Windows platforms.
+
+Thu Apr 20 16:34:21 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* win/winldap.h: Change prototype for ldap_compare_ext_s() to include
+	  extra parameter expected on Windows platforms.
+
+Wed Apr 19 22:13:26 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_ldap_sslconn_bind_f): Fix function definition to
+	  silence compiler warning.
+
+Tue Apr 18 23:40:24 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_ldap_sslconn_bind_f): Function definition was missing
+	  an argument.
+	* sslconn.c (rb_ldap_sslconn_bind_s): Erroneously called
+	  rb_ldap_sslconn_bind_func() instead of rb_ldap_sslconn_bind_f().
+	* sslconn.c (rb_ldap_sslconn_simple_bind_s): Erroneously called
+	  rb_ldap_sslconn_bind_func() instead of rb_ldap_sslconn_bind_f().
+
+Tue Mar  7 23:49:57 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.4.
+
+Tue Mar  7 21:03:01 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_search_ext_s): Modify LDAP::Conn#search_ext to
+	  treat a return value of LDAP_SIZELIMIT_EXCEEDED from
+	  rb_ldap_conn_search_ext_i() as success.
+	* conn.c (rb_ldap_conn_search_ext2_s): Ditto for
+	  LDAP::Conn#search_ext2.
+  
+Mon Mar  6 01:33:10 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_ldap_sslconn_bind_f): New function containing
+	  identical code from rb_ldap_sslconn_bind_s() and
+	  rb_ldap_sslconn_simple_bind_s(). The new function takes a function
+	  pointer as its last parameter, to decide whether to call
+	  rb_ldap_conn_bind_s() or rb_ldap_conn_simple_bind_s(), as previously
+	  called by rb_ldap_sslconn_bind_s() and
+	  rb_ldap_sslconn_simple_bind_s(), respectively.
+	* sslconn.c (rb_ldap_sslconn_bind_s): Code moved to
+	  rb_ldap_sslconn_bind_f().
+	* sslconn.c (rb_ldap_sslconn_simple_bind_s): Code moved to
+	  rb_ldap_sslconn_bind_f().
+
+Mon Mar  6 00:28:38 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_search_i): Give a clearer exception message
+	  when a call to either ldap_search_s(3) or ldap_search_st(3) returns
+	  no pointer to a result.
+
+Thu Mar  2 12:12:58 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_search_s): Modify LDAP::Conn#search to treat a
+	  return value of LDAP_SIZELIMIT_EXCEEDED from rb_ldap_conn_search_i()
+	  as success.
+	* conn.c (rb_ldap_conn_search2_s): Ditto for LDAP::Conn#search2.
+	* rbldap.h: Check_LDAP_Result macro modifed to treat
+	  LDAP_SIZELIMIT_EXCEEDED as success.
+
+Thu Mar  2 11:54:22 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c: RDoc documentation was missing for LDAP::Conn#err.
+
+Sat Feb 18 09:37:14 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.3
+
+Thu Feb 16 01:15:59 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* extconf.rb: Build with -DLDAP_DEPRECATED to enable functions no
+	  longer automatically defined by ldap.h in OpenLDAP 2.3.
+
+Mon Feb 13 17:20:32 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_bind_s): Use RB_LDAP_DATA instead of struct
+	  rb_ldap_data.
+	* conn.c (rb_ldap_conn_simple_bind_s): Ditto.
+	* conn.c (rb_ldap_conn_bound): Ditto.
+	* saslconn.c (rb_ldap_conn_sasl_bind): Ditto.
+
+Mon Feb 13 17:10:08 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_ldap_sslconn_bind_s): In LDAP::SSLConn#bind, ldapdata
+	  was used uninitialised.
+	* sslconn.c (rb_ldap_sslconn_simple_bind_s): Ditto for
+	  LDAP::SSLConn#simple_bind.
+
+Sun Feb 12 20:33:28 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_s_allocate): Silence a warning about
+	  @sasl_quiet when run in debug mode.
+
+Sun Feb 12 17:28:14 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* extconf.rb: Common directory scheme of mkmf.rb is now used. As a
+	  side-effect, --with-ldap-incdir has been replaced by
+	  --with-ldap-include and --with-ldap-libdir has been replaced by
+	  --with-ldap-lib. Thanks to Usa Nakamura <usa@garbagecollect.jp>.
+	* extconf.rb: Display text was improved and grammatical errors were
+	  corrected.
+
+Sun Feb 12 17:08:17 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* conn.c: Make inclusion of sys/time.h and unistd.h conditional on
+	  macro defines. Thanks to Usa Nakamura <usa@garbagecollect.jp>.
+	* saslconn.c: Ditto.
+	* sslconn.c: Ditto.
+
+Sun Feb 12 16:59:06 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* win/winldap.h: Fix up various structs for Windows. Thanks to Usa
+	  Nakamura <usa@garbagecollect.jp> for the patch.
+
+Thu Feb  8 23:15:17 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/schema.rb: Allow LDAP::Schema#attr to find attribute names
+	  that contain hyphens and/or underscores.
+	* lib/ldap/schema.rb: Fix LDAP::Schema#names to not allow all manner
+	  of extra characters in names. That was introduced by the last change.
+
+Thu Feb  8 22:59:07 UTC 2006 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/schema.rb: Relax parsing in LDAP::Schema#names to allow
+	  names with hyphens and/or underscores. This is apparently an issue
+	  with the Sun LDAP server. Thanks to Tilo Sloboda <tilo@unixgods.org>
+	  for pointing out the issue.
+
+Tue Jul  5 19:14:38 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.2
+	* conn.c (rb_ldap_conn_perror): str was not declared, but is needed
+	  depending on certain #define macros.
+
+Tue Mar 23 10:04:19 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_search_i): Allow attrs to be a string, in which
+	  case the parameter is treated as a single-element array. This
+	  affects Conn#search and Conn#search2.
+	* conn.c (rb_ldap_conn_search_ext_i): Ditto for Conn#search_ext and
+	  Conn#search_ext2.
+
+Tue Mar 15 10:47:38 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.1
+
+Tue Mar 15 10:18:46 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* ldap.c: Removed unused variables to silence gcc warnings.
+	* misc.c: Ditto.
+	* entry.c: Ditto.
+	* conn.c: Ditto.
+	* saslconn.c: Ditto.
+
+Mon Mar 14 23:52:58 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_rebind): New function, which is called when
+	  an unbound connection needs to be rebound. It will then call
+	  rb_ldap_conn_initialize() for a Conn object or
+	  rb_ldap_sslconn_initialize() for an SSLConn object, passing in the
+	  original arguments.
+	* conn.c (rb_ldap_conn_bind_s): In LDAP::Conn#bind, allow
+	  rb_ldap_conn_rebind() to rebind a connection that has been unbound.
+	* conn.c (rb_ldap_conn_simple_bind_s): Ditto for
+	  LDAP::Conn#simple_bind.
+	* saslconn.c (rb_ldap_conn_sasl_bind): Ditto for LDAP::Conn#sasl_bind.
+	* sslconn.c (rb_ldap_sslconn_bind_s): Ditto for LDAP::SSLConn#bind.
+	* sslconn.c (rb_ldap_sslconn_simple_bind_s): Ditto for
+	  LDAP::SSLConn#simple_bind.
+	* conn.c (rb_ldap_conn_initialize): Track original parameters to
+	  Conn.new in @args, not @host and @port.
+	* sslconn.c (rb_ldap_sslconn_initialize): Ditto for SSLConn.new.
+
+Sun Mar 13 11:08:00 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_openldap_sslconn_initialize): Remove tracking of
+	  host and port in @host and @port.
+	* sslconn.c (rb_nssldap_sslconn_initialize): Ditto.
+	* sslconn.c (rb_wldap32_sslconn_initialize): Ditto.
+	* sslconn.c (rb_ldap_sslconn_bind_s): Revert usage of @host and @port
+	  to rebind an unbound connection in LDAP::SSLConn#bind.
+	* sslconn.c (rb_ldap_sslconn_simple_bind_s): Ditto for
+	  LDAP::SSLConn#simple_bind.
+
+Sun Mar 13 10:54:34 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_bind_s): In LDAP::Conn#bind, disallow rebinding
+	  of connections if they're SSL connections (as SSLConn calls this
+	  method in the parent class, Conn), since we don't store the required
+	  information about them and we can't allow them to rebind as non-SSL
+	  connections.
+	* conn.c (rb_ldap_conn_simple_bind_s): Ditto for
+	  LDAP::Conn#simple_bind.
+	* saslconn.c (rb_ldap_conn_sasl_bind): Ditto for LDAP::Conn#sasl_bind.
+
+Sun Mar 13 09:40:28 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_ldap_sslconn_s_open): SSLConn#open would call the
+	  method in the superclass, Conn#open. If this was passed two
+	  parameters, the method appeared to succeed, but did not use SSL.
+	  Calling this method now returns NotImplementedError via the new
+	  function, rb_ldap_sslconn_s_open().
+
+Sun Mar 13 08:35:15 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* sslconn.c (rb_openldap_sslconn_initialize): In LDAP::SSLConn.new,
+	  set @host and @port to the host and port of the server to which we
+	  are connecting.
+	* sslconn.c (rb_nssldap_sslconn_initialize): Ditto.
+	* sslconn.c (rb_wldap32_sslconn_initialize): Ditto.
+	* sslconn.c (rb_ldap_sslconn_bind_s): The version of LDAP::SSLConn#bind
+	  used by WLDAP32 now uses @host and @port to reestablish a connection
+	  at bind time if the SSLConn object was previously bound.
+	* sslconn.c (rb_ldap_sslconn_simple_bind_s): Ditto for
+	  LDAP::SSLConn#simple_bind.
+
+Sat Mar 12 11:32:20 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* saslconn.c (rb_ldap_conn_sasl_bind): In LDAP::Conn#sasl_bind, detect
+	  attempts to bind more than once.
+	* saslconn.c (rb_ldap_conn_sasl_bind): In LDAP::Conn#sasl_bind, if we
+	  have an invalid LDAP data structure in self, we check to see whether
+	  both @host and @port are set. If they are, we transparently call
+	  rb_ldap_conn_initialize() to revalidate self's LDAP data structure.
+	  This enables us to rebind after an unbind operation has destroyed
+	  the original LDAP data structure of the LDAP::Conn object.
+
+Sat Mar 12 11:27:48 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_initialize): In LDAP::Conn.new, only set
+	  @sasl_quiet to false if it is not already true, as we may be getting
+	  called from LDAP::Conn#sasl_bind if we are rebinding an unbound
+	  connection. If so and @sasl_quiet had previously been set to true,
+	  we want to keep it that way.
+
+Sat Mar 12 10:54:41 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* saslconn.c (rb_ldap_conn_sasl_bind): In LDAP::Conn#sasl_bind,
+	  automatically set the LDAP protocol to v3 if it is not already so.
+
+Sat Mar 12 09:33:24 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_bound): LDAP::Conn#bound? was throwing an
+	  exception when invoked on a Conn object on which an explicit #unbind
+	  had been performed.
+
+Sat Mar 12 08:48:56 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_simple_bind_s): In LDAP::Conn#simple_bind, if
+	  we have an invalid LDAP data structure in self, we check to see
+	  whether both @host and @port are set. If they are, we transparently
+	  call rb_ldap_conn_initialize() to revalidate self's LDAP data
+	  structure. This enables us to rebind after an unbind operation has
+	  destroyed the original LDAP data structure of the LDAP::Conn object.
+
+Sat Mar 12 08:40:21 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_initialize): In LDAP::Conn.new, set @host and
+	  @port to the host and port of the server to which we are connecting.
+	* conn.c (rb_ldap_conn_bind_s): In LDAP::Conn#bind, if we have an
+	  invalid LDAP data structure in self, we check to see whether both
+	  @host and @port are set. If they are, we transparently call
+	  rb_ldap_conn_initialize() to revalidate self's LDAP data structure.
+	  This enables us to rebind after an unbind operation has destroyed
+	  the original LDAP data structure of the LDAP::Conn object.
+
+Fri Mar 11 23:58:27 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_compare_s): Conn#compare should return true or
+	  false, not self. In fact, self was never returned, anyway, because
+	  an LDAP::ResultError was thrown. This is because ldap_compare_s()
+	  and ldap_compare_ext_s() return an error, not 0 or 1.
+	* conn.c (rb_ldap_conn_compare_ext_s): Ditto for Conn#compare_ext,
+	  because ldap_compare_ext_s() works the same way.
+
+Tue Mar  8 10:15:37 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* entry.c: Make LDAP::Entry#[] an alias of LDAP::Entry#get_values.
+
+Tue Mar  8 09:44:50 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_search_i): Allow attrs to be nil, which is
+	  treated as an empty array. This affects Conn#search and Conn#search2.
+	* conn.c (rb_ldap_conn_search_ext_i): Ditto for Conn#search_ext and
+	  Conn#search_ext2.
+
+Tue Mar  8 00:46:46 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_search_i): attrs should be type-checked to
+	  ensure it is an array. This affects Conn#search and Conn#search2.
+	* conn.c (rb_ldap_conn_search_ext_i): Ditto for Conn#search_ext and
+	  Conn#search_ext2.
+	* conn.c (rb_ldap_conn_search_ext_i): Check to see whether attrs is an
+	  empty array before allocating space.
+
+Thu Mar  3 00:26:44 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* Version 0.9.0
+
+Tue Mar  1 08:14:25 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: Ensure that LDIF.parse_entry always creates on
+	  an array of lines, not a string, as this is probably faster.
+
+Tue Mar  1 02:16:28 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/schema.rb: Extend the list of attributes that
+	  LDAP::Conn#root_dse returns by default. We now include
+	  monitorContext and supportedFeatures, as returned by OpenLDAP 2.2.
+
+Tue Mar  1 01:20:40 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/schema.rb: RDoc documentation added for LDAP::Schema, plus
+	  LDAP::Conn#schema and LDAP::Conn#root_dse.
+
+Mon Feb 28 10:41:35 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* ldap.c: RDoc documentation added for LDAP module functions.
+
+Mon Feb 28 09:51:22 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* misc.c: RDoc documentation added for LDAP::Control.
+
+Mon Feb 28 09:07:42 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* mod.c: RDoc documentation added for LDAP::Mod.
+
+Mon Feb 28 07:50:52 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* entry.c: RDoc documentation added for LDAP::Entry.
+
+Mon Feb 28 04:11:43 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* saslconn.c (rb_ldap_conn_sasl_bind): Return nil, not self, if a
+	  block is passed to LDAP::Conn#sasl_bind.
+	* saslconn.c: RDoc documentation added for LDAP::Conn#sasl_bind.
+
+Mon Feb 28 03:34:01 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* sslconn.c: RDoc documentation added for LDAP::SSLConn.
+
+Fri Feb 26 01:47:14 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: Add LDIF.mods_to_ldif, which will take a DN and
+	  either an LDAP::Mod or an array of LDAP::Mod objects.
+	* lib/ldap/ldif.rb: Rewrite Mod#to_ldif to produce more useful output
+	  for a single mod.
+
+Fri Feb 25 10:49:42 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_modify_s): If passing in a hash,
+	  LDAP_MOD_BVALUES should be set, just in case there are mods
+	  containing binary values. This affects LDAP::Conn#modify.
+	* conn.c (rb_ldap_conn_modify_ext_s): Ditto for LDAP::Conn#modify_ext.
+
+Fri Feb 25 06:51:35 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: Privatise some classes and make LDIFError inherit
+	  from LDAP::Error instead of StandardError.
+
+Thu Feb 24 22:09:29 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: Mask out LDAP_MOD_BVALUES when determining change
+	  type in LDAP::Mod#to_ldif.
+
+Fri Feb 25 10:34:34 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c: RDoc documentation added for LDAP::Conn.
+
+Thu Feb 24 03:24:10 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: LDIF.to_ldif now private.
+
+Thu Feb 24 00:45:45 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: LDAP::Record#send now returns self.
+
+Wed Feb 23 23:54:50 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/ldif.rb: Completely rewritten and now functional.
+
+Tue Feb 22 02:36:16 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_add_s): If passing in a hash, LDAP_MOD_BVALUES
+	  should be set, just in case there are attributes containing binary
+	  values. This affects LDAP::Conn#add.
+	* conn.c (rb_ldap_conn_add_ext_s): Ditto for LDAP::Conn#add_ext.
+
+Sat Feb 19 17:13:49 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (Init_ldap_conn): No longer automatically load ldap/control,
+	  as Ruby versions before 1.8.2 are missing OpenSSL::ASN1::decode.
+
+Thu Feb 15 21:40:58 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* mod.c (rb_ldap_mod_inspect): LDAP::Mod#inspect did not do the right
+	  thing when LDAP_MOD_BVALUES was set.
+
+Thu Feb  8 01:22:28 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* Updates to various documentation files.
+	* Version 0.8.4.
+
+Thu Feb  3 10:24:36 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* mod.c (rb_ldap_mod_inspect): Simplify LDAP::Mod#inspect by
+	  converting Mod to a hash and then calling Hash#inspect on that.
+
+Thu Feb  3 10:09:00 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* entry.c (rb_ldap_entry_inspect): LDAP::Entry#inspect now displays
+	  something useful, thanks to this new function.
+
+Thu Feb  3 01:49:03 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* mod.c (rb_ldap_mod_inspect): LDAP::Mod#inspect did not properly
+	  display multi-value attributes.
+
+Thu Feb  3 01:04:59 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* mod.c (rb_ldap_mod_inspect): New method to implement custom
+	  LDAP::Mod#inspect.
+
+Thu Feb  2 21:44:10 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* lib/ldap/control.rb: - Added LDAP::Control::encode and
+	  LDAP::Control#decode for dealing with controls.
+
+Tue Feb  1 01:29:38 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c: Fixed grammar in a couple of exception messages.
+	* rbldap.h: Ditto.
+
+Mon Jan 31 23:37:41 UTC 2005 Ian Macdonald <ian@caliban.org>
+	* conn.c (rb_ldap_conn_bound): Implement LDAP::Conn#bound? to check
+	  whether connection is still bound.
+	* conn.c (rb_ldap_conn_set_option): Raise exception if an attempt is
+	  made to set protocol version after bind.
+
+Fri Dec 17 12:29:52 UTC 2004 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* saslconn.c (rb_ldap_conn_sasl_bind): Merge Ian Macdonald's patch to
+	  add sasl_quiet attribute to LDAP::Conn objects. It's false by
+	  default, but will silence messages when set to true. This is useful
+	  for silencing OpenLDAP SASL messages.
+	* conn.c (rb_ldap_conn_initialize): Initialise @sasl_quiet to false.
+	* sslconn.c (rb_openldap_sslconn_initialize): Ditto.
+
+Sun Nov 14 14:31:37 UTC 2004 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* Merge Ian Macdonald's patch to add session-level LDAP controls.
+	  LDAP::Conn objects now have two new attributes, @referrals and
+	  @controls, which will be used when the server needs to pass controls
+	  at the session level. Both LDAP::Conn#search and LDAP::Conn#search2
+	  are capable of reading and setting these controls.
+
+Sat Oct  9 09:36:20 UTC 2004 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* version 0.8.3
+
+Mon Feb 16 10:37:11 UTC 2004 Takaaki Tateishi <ttate@users.sourseforge.net>
+	* conn.c: The singleton method Conn.set/get_option() is added.
+	  (Thanks Y.Gotou)
+
+Tue Dec 23 09:08:50 UTC 2003 Takaaki Tateishi <ttate@users.sourseforge.net>
+	* saslconn.c: Merged Ian's patch to allow SASL GSSAPI.
+
+Sat Dec  6 17:35:12 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+        * version 0.8.2
+
+Sat Dec  6 17:35:12 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* conn.c: An array object passed to rb_ensure() shouldn't contain
+          illegal objects such as C pointers.
+
+Sat Nov 15 14:19:38 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* Use StringValueCStr/StringValuePtr instead of STR2CSTR/STR2CPTR.
+
+Sat Oct 18 09:02:27 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* version 0.8.1
+
+Sat Oct 18 09:02:27 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* conn.c: Fixed the memory leak problem of Conn#search which was
+          reported by Akira Yamada.
+
+Mon Oct  6 14:11:01 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* test/add.rb: Adding an attribute 'dn' and fix the object class for
+	  entry1.
+
+	* Removing the directory 'doc'.
+
+	* saslconn.c: Get rid of unreachable lines.
+	  (Thanks Yuuzou Gotou)
+
+Tue Feb 18 18:20:54 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* saslconn.c: Fixed a Conn#sasl_bind which should throw an exception
+          'NotImplementedError' since it was not implemented correctly yet.
+	  (Thanks Hadmut Danisch)
+
+Tue Jan 14 09:14:42 UTC 2003 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* conn.c: Fixed a compile problem for ruby-1.8.x.
+	  (Thanks Radek Hnilica)
+
+Sat Dec 21 22:00:02 UTC 2002 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* Use rb_define_alloc_func() for ruby-1.7.x.
+
+Mon Nov 25 17:38:11 UTC 2002 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* ldap.c: Added LDAP_SASL_SIMPLE.
+
+Mon Nov 18 05:42:46 UTC 2002 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* ldap.c: Added LDAP::LDAP_DEREF_NEVER, and so on.
+	* conn.c: Fixed Conn#set_option for LDAP_OPT_REFERRALS.
+	* conn.c: Fixed the problem that Conn#search(dn,scope,filter,attrs)
+	          dies when attrs is [].
+
+Fri Nov  8 19:30:05 UTC 2002 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* Add Conn#sasl_bind instead of SASLConn, and deleted SASLConn.
+
+Tue Nov  5 07:26:24 UTC 2002 Takaaki Tateishi <ttate@users.sourceforge.net>
+	* This project moved to SourceForge, and the license is changed to BSD.
+
+Tue Oct 22 16:24:13 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* misc.c (Init_ldap_misc): Added "#ifdef HAVE_LDAPCONTROL".
+          (Thanks Pirmin Kalberer)
+
+Mon Aug  5 03:08:20 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.8.0
+
+Sun Aug  4 16:54:53 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* Conform to the allocation framework.
+
+Mon Jul 29 05:13:11 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.7.2
+
+Fri Jul 19 06:40:10 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* win/winldap.h: fix values of LDAP_SCOPE_ONELEVEL and
+	  LDAP_SCOPE_SUBTREE.
+
+Thu Jul 18 16:22:14 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.7.1
+
+Thu Jul 18 16:22:14 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* conn.c: raise -> rb_raise
+
+Wed Jun  5 13:45:25 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* Use ALLOC_N instead of malloc().
+	* rb_sLDAP_Control -> rb_cLDAP_Control.
+
+Sun Jun  2 15:13:17 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.7.0
+
+Sun Jun  2 15:13:17 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* Improve testing scripts.
+
+Sat Jun  1 17:16:16 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* rbldap.h: define RB_LDAP_SET_STR.
+	* misc.c (rb_ldap_get_apiinfo): should allocate new space for a string.
+	* misc.c (rb_ldap_get_controls): ditto.
+	* mod.c (rb_ldap_mod_s_new): ditto.
+	* conn.c: Add Conn#xxxx_ext() methods.
+
+Tue Apr  2 09:01:54 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.6.1
+
+Tue Apr  2 03:53:13 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* conn.c: prohibit multiple bind calls.
+
+Fri Mar 29 15:06:56 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* conn.c: Any operations should not be permitted after the unbind
+	  operation.
+
+Tue Mar 12 07:44:23 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.6.0.
+
+Tue Mar 12 06:08:29 UTC 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* conn.c: a few methods return a connection object.
+
+Fri Jan 11 19:41:59 JST 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* lib/ldap/schema.rb: new file
+
+Wed Jan  2 10:51:05 JST 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* sslconn.c (rb_openldap_sslconn_s_new): Both of LDAPS connection
+	  and StartTLS extension are available.
+	* ldap.c: Add LDAP_OPT_SSL for wldap32.dll.
+
+Wed Jan  2 04:10:20 JST 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* sslconn.c (rb_wldap32_sslconn_s_new): new function for SSL
+	  connection on windows.
+
+Tue Jan  1 10:48:04 JST 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.5.0
+
+Tue Jan  1 10:48:04 JST 2002 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* support wldap32.dll
+	* conn.c (rb_ldap_conn_compare): new method
+
+Sun Dec  9 15:36:41 JST 2001 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* version 0.4.0
+
+Sat Dec  8 23:05:08 JST 2001 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
+	* sslconn.c (rb_ldap_sslconn_s_new): call rb_ldap_conn_new().
+	* saslconn.c (rb_ldap_saslconn_s_new): call rb_ldap_conn_new().
+	* conn.c (rb_ldap_conn_new): initialize ldapdata->bind by 0.
+	* rbldap.h (Init_ldap_message): unused.
+
+Thu Jul  5 22:55:56 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c (rb_eLDAP_Error): the super class of the LDAPError
+	  became the StandardError.
+
+Sun Jul  1 12:06:46 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c (Init_ldap): add constants LDAP_VENDOR_NAME,
+	  LDAP_VENDOR_VERSION and LDAP_API_VERSION
+
+Sat Jun 30 19:45:13 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* saslconn.c (rb_cSASLConn): new class
+	* rbldap.h (Init_xxx): bug fixes
+	* conn.c (rb_ldap_conn_new): use 'klass' as the type of new object
+
+Wed Jun 13 22:03:44 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* sslconn.c (rb_openldap_sslconn_s_new): new function
+	* sslconn.c (rb_nssldap_sslconn_s_new): new function
+	* sslconn.c (rb_ldap_sslconn_s_new): using the above two functions
+
+Mon Jun 13 23:01:13 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.3.7
+
+Mon Jun 11 23:01:13 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* rbldap.h: bug fix for OpenLDAP1 (Thanks Akira Yamada)
+	* misc.h: bug fix for OpenLDAP1,2
+
+Mon Jun 11 20:20:19 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* extconf.rb: bug fix for OpenLDAP1 (thanks Akira Yamada)
+
+Mon Jun 11 10:55:08 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.3.6
+
+Tue Jun  5 01:12:00 JST 2001 Amos Gouaux <amos@utdallas.edu>
+	* conn.c (rb_ldap_conn_get_option): bug fix for LDAP_OPT_API_INFO.
+	* conn.c (rb_ldap_conn_set_option): bug fix for LDAP_OPT_API_INFO.
+	  (checked with the Netscape SDK 4.14 and the OpenLDAP2.0.11)
+
+Wed May 23 11:43:09 JST 2001 Pedro Cuenca <pcuenca@ieee.org>
+	* extconf.rb: $ldap_incdir,$ldap_libdir ware not used.
+
+Fri May 18 18:54:19 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c (rb_ldap_hash2mods): new function
+	* conn.c (rb_ldap_conn_add_s, rb_ldap_conn_mod_s):
+	  you also use hash instead of an array of mod objects.
+	  (see test/add2.rb)
+
+Fri May  4 16:46:31 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* misc.c (rb_ldap_apiinfo_new): new internal function
+	* misc.c (rb_ldap_control_new): new internal function
+	* misc.c (rb_ldap_get_apiinfo): new internal function
+	* misc.c (rb_ldap_get_control): new internal function
+
+Sat Apr 28 08:04:25 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* conn.c (rb_ldap_conn_search2_s): Conn#search2 returns
+	  an array of hash as the result of searching.
+
+Sun Apr 22 09:54:15 JST 2001
+	* version 0.3.5
+
+Sat Apr 21 22:09:38 JST 2001
+	* conn.c (rb_ldap_conn_search_s): sorting is available.
+	* conn.c (rb_ldap_conn_s_open): bug fix
+
+Mon Jan 29 22:40:20 JST 2001 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* conn.c (rb_ldap_conn_set_option): LDAP_OPT_API_INFO
+
+Wed Nov 22 21:51:23 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c: add SASL constants
+
+Wed Nov 22 01:16:32 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* repack (thanks Akinori MUSHA <knu@idaemons.org>)
+	  version 0.3.4
+
+Tue Nov 21 16:21:57 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.3.3
+
+Tue Nov 21 16:19:40 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* mod.c(rb_ldap_mod_s_new): didn't allocate enough space for
+	  'bvals' and 'strvals'.
+
+Tue Nov 21 09:22:17 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c: add OpenLDAP TLS options
+
+Sun Nov 19 21:36:27 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* conn.c (rb_ldap_conn_start_tls_s): add Conn#start_tls
+	  if you use OpenLDAP2. [experimental]
+	* test/bind-ssl.rb: added
+
+Sun Nov 19 03:38:48 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.3.2
+
+Sun Nov 19 03:38:48 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* entry.c (rb_ldap_entry_get_attributes):
+	  ber_free may cause segmentation fault when using openldap1.
+
+Sun Nov 19 02:26:52 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* modify library test scripts for OpenLDAP version 1 and 2.
+	  Run test/test.sh for checking, if you have OpenLDAP.
+
+Sun Oct 29 14:26:50 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.3.1
+
+Sun Oct 29 10:59:06 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* conn.c: Conn#err is added, it returns the result of the operation.
+	* conn.c (rb_ldap_conn_perror): calls ldap_err2string if ldap_perror
+	  is not provided by the library.
+	* conn.c: each method raises LDAP::ResultError if the result of
+	  the operation is not LDAP_SUCCESS.
+	* conn.c (rb_ldap_get_option): allocate enough memory to the 'data'.
+	* extconf.rb: remove -O0 option
+
+Thu Oct 26 11:50:26 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* conn.c: fix some errors for NetscapeSDK
+
+Tue Oct 22 ??:??:?? JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.3 release
+
+Tue Oct 17 11:19:57 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c: add LDAP::LDAP_API_INFO_VERSION
+	* extconf.rb: comile with -O0 flag
+	* misc.c: add LDAP::APIInfo [experimental]
+
+Tue Oct 17 06:34:07 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c: add some LDAP::LDAP_OPT_XXX constant
+	* conn.c: Conn#get_option,set_option is partially implemneted
+
+Mon Oct 16 20:43:31 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* extconf.rb: --with-libxxx,--without-libxxx
+	* conn.c: netscape sdk's ldap_perror is something wrong?
+	  if you meet bugs, execute extconf.rb with --disable-ldap-perror.
+	* sslconn.c: I forgot replacing rb_eLDAP_ERROR with rb_eLDAP_Error.
+
+Mon Oct 16 03:08:37 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* message.rb -> entry.rb
+	* entry.c: LDAP::Message -> LDAP::Entry
+	* conn.c: fix Conn#result2error
+
+Sun Oct 15 12:59:57 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* ldap.c: add LDAP::InvalidMessageError,InvalidDataError.
+	* rbldap.h: add Check_LDAPMSG macro.
+	* rbldap.h: GET_LDAPMSG_DATA checks if given object is valid or not.
+	* conn.c: Conn#search returns the error code, and a block can
+	  be given. the block argument is an instance of LDAPMessage which
+	  is valid in the block.
+	  if it is used out of the block, LDAP::InvalidMessageError is raised.
+	  (see test/test4.rb.)
+	  
+Sun Oct 15 04:07:08 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* message.c: replace RSTRING(str)->ptr with STR2CSTR(str).
+	
+Sat Oct 14 02:21:53 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.2.1 released
+	
+Fri Oct 13 19:16:28 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* (extconf.rb) some library was not linked.
+	* (message.rb) call free() if ldap_memfree was not present.
+	  U-Mich LDAP and OpenLDAP-1.x.x didn't provide it.
+	  (thanks atsu@@metallic.co.jp)
+
+Thu Sep 28 23:05:01 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.2 released
+
+Thu Sep 28 19:54:00 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* (conn.c) rb_ldap_conn_bind uses rb_ensure when a block is given.
+	* (sslconn.c) fix SSLConn.new and SSLConn.open.
+
+Thu Sep 28 15:24:03 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* (extconf.rb) check -lresolv and -lpthread.
+	* Conn#ldap_set_option, Conn#ldap_get_option are supported.(experimental)
+	* LDAP::LDAP_PORT, LDAP::LDAPS_PORT are added.
+	* LDAP::LDAP_OPT_XXXXX are available if they are defined in ldap.h.
+
+Tue Sep 26 06:59:48 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* LDAP::Message#to_hash is added.
+	
+Mon Sep 25 07:49:44 JST 2000 Akinori MUSHA <knu@idaemons.org>
+	* LDAP_AUTH_METHOD_NOT_SUPPORTED is not supported by OpenLDAPv1.
+
+Mon Sep 25 07:49:13 JST 2000 Takaaki Tateishi <ttate@jaist.ac.jp>
+	* version 0.1 released

@@ -1,0 +1,8 @@
+version: 1
+# Delete an entry. The operation will attach the LDAPv3
+# Tree Delete Control defined in. The criticality
+# field is "true" and the controlValue field is
+# absent.
+dn: ou=Product Development, dc=airius, dc=com
+control: 1.2.840.113556.1.4.805 true
+changetype: delete

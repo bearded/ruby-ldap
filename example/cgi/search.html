@@ -1,0 +1,32 @@
+<!-- $Id: search.html,v 1.1.1.1 2002/11/06 07:56:34 ttate Exp $ -->
+<html>
+<head><title>Simple LDAP Gateway using Ruby/LDAP</title></head>
+<body>
+
+<center>
+ <h2>Simple LDAP Gateway using Ruby/LDAP</h2>
+</center>
+
+<a href="http://www.ruby-lang.org/">[Ruby]</a>
+<a href="http://kt-www.jaist.ac.jp:8000/~ttate/lang/ruby/ruby-ldap.html">
+[Ruby/LDAP]</a>
+<hr>
+<h2>Search</h2>
+
+<form method="get" action="search.cgi">
+<table>
+ <tr><td>LDAP Host</td><td><input type=text name=host></td></tr>
+ <tr><td>LDAP Port</td><td><input type=text value=389 name=port></td></tr>
+ <tr><td>Base DN</td><td><input type=text name=base></td></tr>
+ <tr><td>Filter</td><td><input type=text name=filter></td></tr>
+ <tr><td>Attributes</td><td><input type=text name=attrs>(ex. "sn,cn,mail")</td></tr>
+</table>
+<input type=submit value="OK">
+<input type=reset value="Reset">
+</form>
+
+<hr>
+Copyright (C) 2001, Takaaki Tateishi &lt;ttate@jaist.ac.jp&gt;
+
+</body>
+</html>
