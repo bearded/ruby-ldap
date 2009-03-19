@@ -153,15 +153,15 @@ rb_ldap_mod_initialize (int argc, VALUE argv[], VALUE self)
 
   if (mod_op & LDAP_MOD_BVALUES)
     {
-      bvals = ALLOC_N (struct berval *, RARRAY (vals)->len + 1);
-      for (i = 0; i < RARRAY (vals)->len; i++)
+      bvals = ALLOC_N (struct berval *, RARRAY_LEN (vals) + 1);
+      for (i = 0; i < RARRAY_LEN (vals); i++)
 	{
 	  VALUE str;
 	  struct berval *bval;
-	  str = RARRAY (vals)->ptr[i];
+	  str = RARRAY_PTR (vals)[i];
 	  Check_Type (str, T_STRING);
 	  bval = ALLOC_N (struct berval, 1);
-	  bval->bv_len = RSTRING (str)->len;
+	  bval->bv_len = RSTRING_LEN (str);
 	  RB_LDAP_SET_STR (bval->bv_val, str);
 	  bvals[i] = bval;
 	}
@@ -170,12 +170,12 @@ rb_ldap_mod_initialize (int argc, VALUE argv[], VALUE self)
     }
   else
     {
-      strvals = ALLOC_N (char *, RARRAY (vals)->len + 1);
-      for (i = 0; i < RARRAY (vals)->len; i++)
+      strvals = ALLOC_N (char *, RARRAY_LEN (vals) + 1);
+      for (i = 0; i < RARRAY_LEN (vals); i++)
 	{
 	  VALUE str;
 	  char *sval;
-	  str = RARRAY (vals)->ptr[i];
+	  str = RARRAY_PTR (vals)[i];
 	  RB_LDAP_SET_STR (sval, str);
 	  strvals[i] = sval;
 	}
@@ -273,13 +273,18 @@ rb_ldap_mod_inspect (VALUE self)
 {
   VALUE str;
   VALUE hash = rb_hash_new ();
-  char *c;
+  const char *c;
 
   c = rb_obj_classname (self);
   str = rb_str_new (0, strlen (c) + 10 + 16 + 1);	/* 10:tags 16:addr 1:nul */
-  sprintf (RSTRING (str)->ptr, "#<%s:0x%lx ", c, self);
-  RSTRING (str)->len = strlen (RSTRING (str)->ptr);
+  sprintf (RSTRING_PTR (str), "#<%s:0x%lx ", c, self);
 
+#if RUBY_VERSION_CODE < 190
+  RSTRING(str)->len = strlen (RSTRING_PTR (str));
+#else
+  rb_str_set_len(str, strlen (RSTRING_PTR (str)));
+#endif
+  
   switch (FIX2INT (rb_ldap_mod_op (self)) & ~LDAP_MOD_BVALUES)
     {
     case LDAP_MOD_ADD:
@@ -334,7 +339,7 @@ Init_ldap_mod ()
   rb_define_alloc_func (rb_cLDAP_Mod, rb_ldap_mod_s_allocate);
 #else
   rb_define_singleton_method (rb_cLDAP_Mod, "allocate",
-			      rb_ldap_mod_s_allocate, 0);
+                             rb_ldap_mod_s_allocate, 0);
 #endif
   rb_ldap_mod_define_method ("initialize", rb_ldap_mod_initialize, -1);
   rb_ldap_mod_define_method ("mod_op", rb_ldap_mod_op, 0);

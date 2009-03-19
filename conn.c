@@ -210,10 +210,10 @@ rb_ldap_conn_rebind (VALUE self)
   VALUE ary = rb_iv_get (self, "@args");
 
   if (rb_obj_is_kind_of (self, rb_cLDAP_SSLConn) == Qtrue)
-    return rb_ldap_sslconn_initialize (RARRAY (ary)->len, RARRAY (ary)->ptr,
+    return rb_ldap_sslconn_initialize (RARRAY_LEN (ary), RARRAY_PTR (ary),
 				       self);
   else
-    return rb_ldap_conn_initialize (RARRAY (ary)->len, RARRAY (ary)->ptr,
+    return rb_ldap_conn_initialize (RARRAY_LEN (ary), RARRAY_PTR (ary),
 				    self);
 }
 
@@ -847,18 +847,18 @@ rb_ldap_conn_search_i (int argc, VALUE argv[], VALUE self,
 	  else
 	    Check_Type (attrs, T_ARRAY);
 
-	  if (RARRAY (attrs)->len == 0)
+	  if (RARRAY_LEN (attrs) == 0)
 	    {
 	      cattrs = NULL;
 	    }
 	  else
 	    {
-	      cattrs = ALLOCA_N (char *, (RARRAY (attrs)->len + 1));
-	      for (i = 0; i < RARRAY (attrs)->len; i++)
+	      cattrs = ALLOCA_N (char *, (RARRAY_LEN (attrs) + 1));
+	      for (i = 0; i < RARRAY_LEN (attrs); i++)
 		{
-		  cattrs[i] = StringValueCStr (RARRAY (attrs)->ptr[i]);
+		  cattrs[i] = StringValueCStr (RARRAY_PTR (attrs)[i]);
 		};
-	      cattrs[RARRAY (attrs)->len] = NULL;
+	      cattrs[RARRAY_LEN (attrs)] = NULL;
 	    }
 	}
     case 3:
@@ -1180,18 +1180,18 @@ rb_ldap_conn_search_ext_i (int argc, VALUE argv[], VALUE self,
 	  else
 	    Check_Type (attrs, T_ARRAY);
 
-	  if (RARRAY (attrs)->len == 0)
+	  if (RARRAY_LEN (attrs) == 0)
 	    {
 	      cattrs = NULL;
 	    }
 	  else
 	    {
-	      cattrs = ALLOCA_N (char *, (RARRAY (attrs)->len + 1));
-	      for (i = 0; i < RARRAY (attrs)->len; i++)
+	      cattrs = ALLOCA_N (char *, (RARRAY_LEN (attrs) + 1));
+	      for (i = 0; i < RARRAY_LEN (attrs); i++)
 		{
-		  cattrs[i] = StringValueCStr (RARRAY (attrs)->ptr[i]);
+		  cattrs[i] = StringValueCStr (RARRAY_PTR (attrs)[i]);
 		};
-	      cattrs[RARRAY (attrs)->len] = NULL;
+	      cattrs[RARRAY_LEN (attrs)] = NULL;
 	    }
 	}
     case 3:
@@ -1382,11 +1382,11 @@ rb_ldap_conn_add_s (VALUE self, VALUE dn, VALUE attrs)
 
   GET_LDAP_DATA (self, ldapdata);
   c_dn = StringValueCStr (dn);
-  c_attrs = ALLOCA_N (LDAPMod *, (RARRAY (attrs)->len + 1));
+  c_attrs = ALLOCA_N (LDAPMod *, (RARRAY_LEN (attrs) + 1));
 
-  for (i = 0; i < RARRAY (attrs)->len; i++)
+  for (i = 0; i < RARRAY_LEN (attrs); i++)
     {
-      VALUE mod = RARRAY (attrs)->ptr[i];
+      VALUE mod = RARRAY_PTR (attrs)[i];
       RB_LDAPMOD_DATA *moddata;
       Check_Kind (mod, rb_cLDAP_Mod);
       GET_LDAPMOD_DATA (mod, moddata);
@@ -1435,13 +1435,13 @@ rb_ldap_conn_add_ext_s (VALUE self, VALUE dn, VALUE attrs,
 
   GET_LDAP_DATA (self, ldapdata);
   c_dn = StringValueCStr (dn);
-  c_attrs = ALLOCA_N (LDAPMod *, (RARRAY (attrs)->len + 1));
+  c_attrs = ALLOCA_N (LDAPMod *, (RARRAY_LEN (attrs) + 1));
   sctrls = rb_ldap_get_controls (serverctrls);
   cctrls = rb_ldap_get_controls (clientctrls);
 
-  for (i = 0; i < RARRAY (attrs)->len; i++)
+  for (i = 0; i < RARRAY_LEN (attrs); i++)
     {
-      VALUE mod = RARRAY (attrs)->ptr[i];
+      VALUE mod = RARRAY_PTR (attrs)[i];
       RB_LDAPMOD_DATA *moddata;
       Check_Kind (mod, rb_cLDAP_Mod);
       GET_LDAPMOD_DATA (mod, moddata);
@@ -1489,11 +1489,11 @@ rb_ldap_conn_modify_s (VALUE self, VALUE dn, VALUE attrs)
 
   GET_LDAP_DATA (self, ldapdata);
   c_dn = StringValueCStr (dn);
-  c_attrs = ALLOC_N (LDAPMod *, RARRAY (attrs)->len + 1);
+  c_attrs = ALLOC_N (LDAPMod *, RARRAY_LEN (attrs) + 1);
 
-  for (i = 0; i < RARRAY (attrs)->len; i++)
+  for (i = 0; i < RARRAY_LEN (attrs); i++)
     {
-      VALUE mod = RARRAY (attrs)->ptr[i];
+      VALUE mod = RARRAY_PTR (attrs)[i];
       RB_LDAPMOD_DATA *moddata;
       Check_Kind (mod, rb_cLDAP_Mod);
       GET_LDAPMOD_DATA (mod, moddata);
@@ -1543,13 +1543,13 @@ rb_ldap_conn_modify_ext_s (VALUE self, VALUE dn, VALUE attrs,
 
   GET_LDAP_DATA (self, ldapdata);
   c_dn = StringValueCStr (dn);
-  c_attrs = ALLOC_N (LDAPMod *, RARRAY (attrs)->len + 1);
+  c_attrs = ALLOC_N (LDAPMod *, RARRAY_LEN (attrs) + 1);
   sctrls = rb_ldap_get_controls (serverctrls);
   cctrls = rb_ldap_get_controls (clientctrls);
 
-  for (i = 0; i < RARRAY (attrs)->len; i++)
+  for (i = 0; i < RARRAY_LEN (attrs); i++)
     {
-      VALUE mod = RARRAY (attrs)->ptr[i];
+      VALUE mod = RARRAY_PTR (attrs)[i];
       RB_LDAPMOD_DATA *moddata;
       Check_Kind (mod, rb_cLDAP_Mod);
       GET_LDAPMOD_DATA (mod, moddata);
@@ -1703,7 +1703,7 @@ rb_ldap_conn_compare_ext_s (VALUE self, VALUE dn, VALUE attr, VALUE val,
   c_val = StringValueCStr (val);
 #endif
   bval.bv_val = StringValueCStr (val);
-  bval.bv_len = RSTRING (val)->len;
+  bval.bv_len = RSTRING_LEN (val);
   sctrls = rb_ldap_get_controls (serverctrls);
   cctrls = rb_ldap_get_controls (clientctrls);
 
@@ -1762,7 +1762,7 @@ Init_ldap_conn ()
   rb_define_alloc_func (rb_cLDAP_Conn, rb_ldap_conn_s_allocate);
 #else
   rb_define_singleton_method (rb_cLDAP_Conn, "allocate",
-			      rb_ldap_conn_s_allocate, 0);
+                             rb_ldap_conn_s_allocate, 0);
 #endif
   rb_define_singleton_method (rb_cLDAP_Conn, "open", rb_ldap_conn_s_open, -1);
   rb_define_singleton_method (rb_cLDAP_Conn, "set_option",

@@ -53,11 +53,11 @@ rb_ldap_get_apiinfo (VALUE data)
   info->ldapai_protocol_version =
     FIX2INT (rb_struct_getmember (data, rb_intern ("protocol_version")));
   r_extensions = rb_struct_getmember (data, rb_intern ("extensions"));
-  len = RARRAY (r_extensions)->len;
+  len = RARRAY_LEN (r_extensions);
   c_extensions = ALLOCA_N (char *, len);
   for (i = 0; i <= len - 1; i++)
     {
-      VALUE str = RARRAY (r_extensions)->ptr[i];
+      VALUE str = RARRAY_PTR (r_extensions)[i];
       RB_LDAP_SET_STR (c_extensions[i], str);
     }
   info->ldapai_extensions = c_extensions;
@@ -131,6 +131,7 @@ rb_ldap_control_s_allocate (VALUE klass)
   return Data_Wrap_Struct (klass, 0, rb_ldap_control_free, ctl);
 }
 
+#if RUBY_VERSION_CODE < 170
 static VALUE
 rb_ldap_control_s_new (int argc, VALUE argv[], VALUE klass)
 {
@@ -141,6 +142,7 @@ rb_ldap_control_s_new (int argc, VALUE argv[], VALUE klass)
 
   return obj;
 }
+#endif
 
 static VALUE
 rb_ldap_control_set_value (VALUE self, VALUE val)
@@ -160,7 +162,7 @@ rb_ldap_control_set_value (VALUE self, VALUE val)
   else
     {
       RB_LDAP_SET_STR (ctl->ldctl_value.bv_val, val);
-      ctl->ldctl_value.bv_len = RSTRING (val)->len;
+      ctl->ldctl_value.bv_len = RSTRING_LEN (val);
     }
 
   return val;
@@ -449,7 +451,7 @@ rb_ldap_get_controls (VALUE data)
     return NULL;
 
   Check_Type (data, T_ARRAY);
-  len = RARRAY (data)->len;
+  len = RARRAY_LEN (data);
   ctls = ALLOC_N (LDAPControl *, len + 1);
   for (i = 0; i < len; i++)
     {
@@ -477,16 +479,15 @@ Init_ldap_misc ()
 
 #ifdef HAVE_LDAPCONTROL
   rb_cLDAP_Control = rb_define_class_under (rb_mLDAP, "Control", rb_cObject);
-#if RUBY_VERSION_CODE >= 170
-#  if RUBY_VERSION_CODE >= 173
-  rb_define_alloc_func (rb_cLDAP_Control, rb_ldap_control_s_allocate);
-#  else
-  rb_define_singleton_method (rb_cLDAP_Control, "allocate",
-			      rb_ldap_control_s_allocate, 0);
-#  endif
-#else
+#if RUBY_VERSION_CODE < 170
   rb_define_singleton_method (rb_cLDAP_Control, "new",
-			      rb_ldap_control_s_new, -1);
+                             rb_ldap_control_s_new, -1);
+#endif
+#if RUBY_VERSION_CODE >= 173
+  rb_define_alloc_func (rb_cLDAP_Control, rb_ldap_control_s_allocate);
+#else
+  rb_define_singleton_method (rb_cLDAP_Control, "allocate",
+                             rb_ldap_control_s_allocate, 0);
 #endif
   rb_define_method (rb_cLDAP_Control, "initialize",
 		    rb_ldap_control_initialize, -1);

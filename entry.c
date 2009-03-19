@@ -152,7 +152,7 @@ rb_ldap_entry_to_hash (VALUE self)
   Check_Type (attrs, T_ARRAY);
   rb_hash_aset (hash, rb_tainted_str_new2 ("dn"),
 		rb_ary_new3 (1, rb_ldap_entry_get_dn (self)));
-  for (i = 0; i < RARRAY (attrs)->len; i++)
+  for (i = 0; i < RARRAY_LEN (attrs); i++)
     {
       attr = rb_ary_entry (attrs, i);
       vals = rb_ldap_entry_get_values (self, attr);
@@ -172,12 +172,18 @@ VALUE
 rb_ldap_entry_inspect (VALUE self)
 {
   VALUE str;
-  char *c;
+  const char *c;
 
   c = rb_obj_classname (self);
   str = rb_str_new (0, strlen (c) + 10 + 16 + 1);	/* 10:tags 16:addr 1:nul */
-  sprintf (RSTRING (str)->ptr, "#<%s:0x%lx\n", c, self);
-  RSTRING (str)->len = strlen (RSTRING (str)->ptr);
+  sprintf (RSTRING_PTR (str), "#<%s:0x%lx\n", c, self);
+
+#if RUBY_VERSION_CODE < 190
+  RSTRING(str)->len = strlen (RSTRING_PTR (str));
+#else
+  rb_str_set_len(str, strlen (RSTRING_PTR (str)));
+#endif
+
   rb_str_concat (str, rb_inspect (rb_ldap_entry_to_hash (self)));
   rb_str_cat2 (str, ">");
 

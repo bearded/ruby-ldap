@@ -95,20 +95,20 @@ rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
       dn = StringValuePtr (arg1);
       mechanism = StringValuePtr (arg2);
       cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING (arg3)->len;
+      cred->bv_len = RSTRING_LEN (arg3);
       break;
     case 4:
       dn = StringValuePtr (arg1);
       mechanism = StringValuePtr (arg2);
       cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING (arg3)->len;
+      cred->bv_len = RSTRING_LEN (arg3);
       serverctrls = rb_ldap_get_controls (arg4);
       break;
     case 5:
       dn = StringValuePtr (arg1);
       mechanism = StringValuePtr (arg2);
       cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING (arg3)->len;
+      cred->bv_len = RSTRING_LEN (arg3);
       serverctrls = rb_ldap_get_controls (arg4);
       clientctrls = rb_ldap_get_controls (arg5);
       break;

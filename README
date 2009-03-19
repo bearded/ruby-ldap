@@ -1,9 +1,10 @@
                  Ruby/LDAP -- A Ruby extension library for LDAP
 
-$Id: README,v 1.18 2006/04/19 22:21:14 ianmacd Exp $
+$Id: README,v 1.19 2009/03/19 15:25:20 alexey.chebotar Exp $
 
 Copyright (C) 2000-2004 Takaaki Tateishi <ttate@users.sourceforge.net>      
 Copyright (C) 2005-2006 Ian Macdonald <ian@caliban.org>
+Copyright (C) 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
 -------------------------------------------------------------------------------
 
 DESCRIPTION
@@ -14,7 +15,7 @@ API as described in RFC1823.
 
 REQUIREMENT
 
-  * Ruby 1.8.x (at least 1.8.2 if you want to use ldap/control)
+  * Ruby 1.8.x / 1.9.x (at least 1.8.2 if you want to use ldap/control)
   * OpenLDAP, Netscape SDK, Windows 2003 or Windows XP
 
 -------------------------------------------------------------------------------
@@ -241,3 +242,4 @@ Here are some URLs that contain useful information about LDAP:
     http://ldap.hklc.com/
   * Object Identifiers Registry
     http://www.alvestrand.no/harald/objectid/
+

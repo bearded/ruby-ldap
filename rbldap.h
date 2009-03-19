@@ -16,8 +16,6 @@
 # include <ldap.h>
 #endif
 
-#include <version.h>
-
 #ifdef HAVE_LDAP_SSL_H
 #include <ldap_ssl.h>
 #endif
@@ -36,8 +34,8 @@
 
 #define RB_LDAP_SET_STR(var,val) {\
    Check_Type(val, T_STRING); \
-   var = ALLOC_N(char, RSTRING(val)->len + 1); \
-   memcpy(var, RSTRING(val)->ptr, RSTRING(val)->len + 1); \
+   var = ALLOC_N(char, RSTRING_LEN(val) + 1); \
+   memcpy(var, RSTRING_PTR(val), RSTRING_LEN(val) + 1); \
 }
 
 #if defined(HAVE_LDAP_SEARCH_EXT_S)

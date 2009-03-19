@@ -378,14 +378,14 @@ module LDAP
 
 	mods[LDAP_MOD_ADD] = []
 
-	hash.each do |attr,val|
-	  if bvalues.include?( attr )
+	hash.each do |attr_local, val|
+	  if bvalues.include?( attr_local )
 	    ct = LDAP_MOD_ADD | LDAP_MOD_BVALUES
 	  else
 	    ct = LDAP_MOD_ADD
 	  end
 
-	  mods[LDAP_MOD_ADD] << LDAP.mod( ct, attr, val )
+	  mods[LDAP_MOD_ADD] << LDAP.mod( ct, attr_local, val )
 	end
 
       when LDAP_MOD_DELETE
@@ -398,16 +398,16 @@ module LDAP
 
 	new_mods = {}
 
-	mods.each do |mod_type,attrs|
-	  attrs.each_key do |attr|
-	    if bvalues.include?( attr )
-	      mt = mod_type | LDAP_MOD_BVALUES
+	mods.each do |mod_type_local,attrs|
+	  attrs.each_key do |attr_local|
+	    if bvalues.include?( attr_local )
+	      mt = mod_type_local | LDAP_MOD_BVALUES
 	    else
-	      mt = mod_type
+	      mt = mod_type_local
 	    end
 
 	    new_mods[mt] ||= {}
-	    new_mods[mt][attr] = mods[mod_type][attr]
+	    new_mods[mt][attr_local] = mods[mod_type_local][attr_local]
 	  end
 	end
 
