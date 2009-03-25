@@ -1,0 +1,12 @@
+version: 1
+dn: cn=Horatio Jensen, ou=Product Testing, dc=airius, dc=com
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+cn: Horatio Jensen
+
+cn: Horatio N Jensen
+sn: Jensen
+uid: hjensen
+telephonenumber: +1 408 555 1212
+jpegphoto:< file:///etc/ld.so.cache

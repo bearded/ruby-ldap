@@ -1,0 +1,30 @@
+# $OpenLDAP$
+#
+# stand-alone slapd config -- for testing
+#	with indexing
+#
+include  %LDAPSCHEMADIR%/core.schema
+include  %LDAPSCHEMADIR%/cosine.schema
+include  %LDAPSCHEMADIR%/inetorgperson.schema
+schemacheck	on
+pidfile  ./test-db/slapd.pid
+argsfile ./test-db/slapd.args
+
+#allow	bind_v2
+
+#######################################################################
+# ldbm database definitions
+#######################################################################
+
+database	ldbm
+suffix		"dc=localhost, dc=localdomain"
+directory	./test-db
+rootdn		"cn=root, dc=localhost, dc=localdomain"
+rootpw		secret
+index		objectclass	eq
+index		uid	pres,eq,sub
+index		cn,sn	pres,eq,sub,subany
+dbnosync
+dbnolocking
+
+#moduleload /home/ttate/tmp/module.so

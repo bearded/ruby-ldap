@@ -1,0 +1,72 @@
+#!/usr/bin/ruby -w
+#
+# $Id: pr_ctl,v 1.4 2006/02/12 20:00:21 ianmacd Exp $
+#
+# Program to demonstrate the use of the LDAPv3 PagedResults control. This
+# control is interesting, because it requires the passing of controls in
+# both directions between the client and the server.
+#
+# See RFC 2696 for more information.
+
+require 'ldap'
+require 'ldap/control'
+
+# Find a PagedResults control in an Array of LDAP controls.
+#
+def paged_results_ctl( ctls )
+  ctls.each do |ctl|
+    return ctl if ctl.oid == LDAP::LDAP_CONTROL_PAGEDRESULTS
+  end
+
+  nil
+end
+ 
+unless ARGV[0]
+  $stderr.puts "Please give a page size."
+  exit
+end
+page_size = ARGV[0].to_i
+cookie = ''
+critical = true
+
+conn = LDAP::Conn.new( 'localhost', 389 )
+conn.set_option( LDAP::LDAP_OPT_PROTOCOL_VERSION, 3 )
+conn.bind( '', '' )
+
+search = 0
+total = 0
+
+loop do
+  ber_string = LDAP::Control.encode( page_size, cookie )
+  control = LDAP::Control.new( LDAP::LDAP_CONTROL_PAGEDRESULTS,
+			       ber_string,
+			       critical )
+  conn.set_option( LDAP::LDAP_OPT_SERVER_CONTROLS, [control] )
+
+  this_page = conn.search2( 'dc=google, dc=com',
+			    LDAP::LDAP_SCOPE_SUBTREE,
+			    '(objectclass=*)', ['cn'] )
+
+  printf( "Page %d has %d entries.\n", search += 1, this_page.size )
+  printf( "That's %d entries in total.\n", total += this_page.size )
+  
+  # Get the PagedResults control from the list of controls set by the
+  # last search operation.
+  control = paged_results_ctl( conn.controls )
+  
+  # How many entries does the server estimate are left?
+  # Also, get the cookie returned by the last search.
+  returned_size, cookie = control.decode
+  puts "Returned size = #{returned_size.to_i}" if $DEBUG
+  
+  # According to RFC 2696, the server may not be able to estimate the number
+  # of results outstanding. In that case, it will return zero, so we should
+  # only use the new size if it is non-zero.
+  page_size = returned_size.to_i if returned_size.to_i > 0
+  
+  puts "Returned cookie = #{cookie.inspect}" if $DEBUG
+
+  break if cookie.empty?
+  
+  puts
+end
