@@ -1,3 +1,6 @@
+Wed Apr 15 11:38:06 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
+        * Fixed regular expression in LDAP::Schema.attr()
+	
 Thu Mar 25 08:45:02 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
 	* Version 0.9.8.
 

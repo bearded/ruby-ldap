@@ -25,7 +25,7 @@ module LDAP
     # +key+. See LDAP::Conn#schema for common values of +key+.
     #
     def names(key)
-      self[key].collect{|val| val =~ /NAME\s+'([\w\d_-]+)'/; $1}
+      self[key].collect{|val| val =~ /NAME\s+'([\w\d_\-]+)'/; $1}
     end
 
     # Return the list of attributes in object class +oc+ that are of category
@@ -35,10 +35,8 @@ module LDAP
       self['objectClasses'].each{|s|
 	if( s =~ /NAME\s+'#{oc}'/ )
 	  case s
-	  when /#{at}\s+\(([\w\d_-\s\$]+)\)/i
-	    return $1.split("$").collect{|attr| attr.strip}
-	  when /#{at}\s+([\w\d_-]+)/i
-	    return $1.split("$").collect{|attr| attr.strip}
+	  when /#{at}\s+\(([\w\d_\-\s\$]+)\)/i then return $1.split("$").collect{|attr| attr.strip}
+	  when /#{at}\s+([\w\d_\-]+)/i then return $1.split("$").collect{|attr| attr.strip}
 	  end
 	end
       }
