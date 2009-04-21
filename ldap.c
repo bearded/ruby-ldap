@@ -420,8 +420,8 @@ Init_ldap ()
 #ifdef LDAP_OPT_X_TLS
   rb_ldap_define_opt (LDAP_OPT_X_TLS);
 #endif
-#ifdef LDAP_OPT_X_TLS_PROTOCOL
-  rb_ldap_define_opt (LDAP_OPT_X_TLS_PROTOCOL);
+#ifdef LDAP_OPT_X_TLS_PROTOCOL_MIN
+  rb_ldap_define_opt (LDAP_OPT_X_TLS_PROTOCOL_MIN);
 #endif
 #ifdef LDAP_OPT_X_TLS_CIPHER_SUITE
   rb_ldap_define_opt (LDAP_OPT_X_TLS_CIPHER_SUITE);

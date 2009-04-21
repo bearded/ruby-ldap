@@ -1,3 +1,7 @@
+Tue Apr 21 14:46:38 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
+        * LDAP_OPT_X_TLS_PROTOCOL changed to LDAP_OPT_X_TLS_PROTOCOL_MIN
+	  (more information in ITS#5655). Thanks to Milos Jakubicek.
+
 Wed Apr 15 11:38:06 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
         * Fixed regular expression in LDAP::Schema.attr()
 	

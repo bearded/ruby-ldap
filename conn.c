@@ -497,8 +497,8 @@ rb_ldap_conn_set_option (VALUE self, VALUE opt, VALUE data)
 #ifdef LDAP_OPT_X_TLS_KEYFILE
     case LDAP_OPT_X_TLS_KEYFILE:
 #endif
-#ifdef LDAP_OPT_X_TLS_PROTOCOL
-    case LDAP_OPT_X_TLS_PROTOCOL:
+#ifdef LDAP_OPT_X_TLS_PROTOCOL_MIN
+    case LDAP_OPT_X_TLS_PROTOCOL_MIN:
 #endif
 #ifdef LDAP_OPT_X_TLS_CIPHER_SUITE
     case LDAP_OPT_X_TLS_CIPHER_SUITE:
@@ -627,8 +627,8 @@ rb_ldap_conn_get_option (VALUE self, VALUE opt)
 #ifdef LDAP_OPT_X_TLS_KEYFILE
 	case LDAP_OPT_X_TLS_KEYFILE:
 #endif
-#ifdef LDAP_OPT_X_TLS_PROTOCOL
-	case LDAP_OPT_X_TLS_PROTOCOL:
+#ifdef LDAP_OPT_X_TLS_PROTOCOL_MIN
+	case LDAP_OPT_X_TLS_PROTOCOL_MIN:
 #endif
 #ifdef LDAP_OPT_X_TLS_CIPHER_SUITE
 	case LDAP_OPT_X_TLS_CIPHER_SUITE:
