@@ -1,0 +1,265 @@
+                 Ruby/LDAP -- A Ruby extension library for LDAP
+
+$Id: README,v 1.19 2009/03/19 15:25:20 alexey.chebotar Exp $
+
+Copyright (C) 2000-2004 Takaaki Tateishi <ttate@users.sourceforge.net>      
+Copyright (C) 2005-2006 Ian Macdonald <ian@caliban.org>
+Copyright (C) 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
+-------------------------------------------------------------------------------
+
+DESCRIPTION
+
+'Ruby/LDAP' is a Ruby extension library that provides an interface to the LDAP
+API as described in RFC1823.
+-------------------------------------------------------------------------------
+
+REQUIREMENT
+
+  * Ruby 1.8.x / 1.9.x (at least 1.8.2 if you want to use ldap/control)
+  * OpenLDAP, Netscape SDK, Windows 2003 or Windows XP
+
+-------------------------------------------------------------------------------
+
+PORTS
+
+  * FreeBSD ("Akinori -Aki- MUSHA" <knu@idaemons.org>)
+  * Debian (Akira Yamada <akira@ruby-lang.org>)
+
+-------------------------------------------------------------------------------
+
+BUILDING
+
+extconf.rb will try to use the OpenLDAP 2 or Netscape SDK libraries and guess
+paths to some header files and libraries from the position of ldap.h. If you'd
+like to see the available options for extconf.rb, run it with '--help' option.
+
+    $ ruby extconf.rb [--with-openldap1|--with-openldap2|--with-netscape|--with-wldap32]
+    $ make
+
+This will create ldap.so, which you can either manually copy into place or
+install with:
+
+    $ make install
+
+If you're building the software on Windows, you may need to use nmake instead
+of make.
+
+-------------------------------------------------------------------------------
+
+LICENSE
+
+See COPYING.
+-------------------------------------------------------------------------------
+
+AVAILABLE CLASSES and METHODS
+
+     LDAP::LDAP_VERSION
+     LDAP::LDAP_MAX_VERSION
+     LDAP::VERSION
+     LDAP::MAJOR_VERSION
+     LDAP::MINOR_VERSION
+     LDAP::LDAP_PORT
+     LDAP::LDAPS_PORT
+     LDAP::LDAP_API_INFO_VERSION
+     LDAP::LDAP_VENDOR_NAME
+     LDAP::LDAP_VENDOR_VERSION
+     LDAP::LDAP_API_VERSION
+     LDAP.err2string(errcode)
+     LDAP.dn2ufn(dn)
+     LDAP.mod(mod_op, mod_type, mod_vals) (= LDAP::Mod.new)
+     LDAP.hash2mods(mod_op, hash)
+     LDAP.entry2hash(entry) (= entry.to_hash)
+     LDAP::Conn.new(host = "localhost", port = LDAP::LDAP_PORT)
+                    : conn (raise LDAP::Error)
+     LDAP::Conn.open(host = "localhost", port = LDAP::LDAP_PORT)
+                    : conn (raise LDAP::Error)
+     LDAP::Conn#simple_bind(dn = nil, password = nil) { ... }
+                    : conn (raise LDAP::ResultError)
+     LDAP::Conn#bind(dn = nil, password = nil,
+                     method = LDAP::LDAP_AUTH_SIMPLE) {|conn| ... }
+                     (raise LDAP::ResultError)
+     LDAP::Conn#bind(dn = nil, password = nil,
+                     method = LDAP::LDAP_AUTH_SIMPLE) : conn
+                     (raise LDAP::ResultError)
+     LDAP::Conn#sasl_bind(dn = nil, mech = nil, cred = nil,
+			  sctrls=nil, cctrls=nil) {|conn| ... } 
+			  (raise LDAP::ResultError)
+     LDAP::Conn#sasl_bind(dn = nil, mech = nil, cred = nil,
+			  sctrls=nil, cctrls=nil) : conn
+			  (raise LDAP::ResultError)
+     LDAP::Conn#bound? : true || false
+     LDAP::Conn#unbind() (raise LDAP::ResultError)
+     LDAP::Conn#start_tls
+     LDAP::Conn#perror(str)
+     LDAP::Conn#result2error(ldap_msg) : errcode
+     LDAP::Conn#err2string(errcode) : errmsg
+     LDAP::Conn#get_errno : errcode [if available]
+     LDAP::Conn#search(basedn, scope, filter, attrs = nil, attrsonly = false,
+                       sec = 0, usec = 0,
+		       s_attr = nil, s_proc = nil) {|entry| ... }
+                       : conn (raise LDAP::ResultError)
+     LDAP::Conn#search2(basedn, scope, filter, attrs = nil, attrsonly = false,
+                        sec = 0, usec = 0,
+			s_attr = nil, s_proc = nil) {|entry_as_hash| ... }
+                        : conn (if a block is given) /
+		          Array of Hash (if no block is given)
+                          (raise LDAP::ResultError)
+     LDAP::Conn#search_ext(basedn, scope, filter, attrs = nil,
+			   attrsonly = false, serverctrls, clientctrls,
+			   sec = 0, usec = 0,
+			   s_attr = nil, s_proc = nil) {|entry| ... }
+                           : conn (raise LDAP::ResultError)
+     LDAP::Conn#search_ext2(basedn, scope, filter, attrs = nil,
+			    attrsonly = false,
+                            serverctrls, clientctrls, sec = 0, usec = 0,
+                            s_attr = nil, s_proc = nil) {|entry_as_hash| ... }
+                            : conn (if a block is given) /
+			      Array of Hash (if no block is given)
+                              (raise LDAP::ResultError)
+     LDAP::Conn#add(dn, ldap_mods) : self (raise LDAP::ResultError)
+     LDAP::Conn#add_ext(dn, ldap_mods, serverctrls, clientctrls)
+                        : self (raise LDAP::ResultError)
+     LDAP::Conn#modify(dn, ldap_mods) : self (raise LDAP::ResultError)
+     LDAP::Conn#modify_ext(dn, ldap_mods, serverctrls, clientctrls)
+                           : self (raise LDAP::ResultError)
+     LDAP::Conn#modrdn(olddn, newdn, delete) : self (raise LDAP::ResultError)
+     LDAP::Conn#delete(dn) : self (raise LDAP::ResultError)
+     LDAP::Conn#delete(dn, serverctrls, clientctrls) : self
+		       (raise LDAP::ResultError)
+     LDAP::Conn#compare(dn, attr, val) : self
+     LDAP::Conn#compare_ext(dn, attr, val, serverctrls, clientctrls) : self
+     LDAP::Conn#set_option(opt, data) : self (raise LDAP::ResultError)
+     LDAP::Conn#get_option(opt) : data (raise LDAP::ResultError)
+     LDAP::Conn#schema(base = nil, attrs = nil,
+		       sec = 0, usec = 0) : LDAP::Schema
+     LDAP::Conn#root_dse(attrs = nil, sec = 0, usec = 0) : Array of Hash
+     LDAP::SSLConn.new(host = 'localhost', port = LDAP_PORT,
+		       start_tls = false, sctrls=nil, cctrls=nil)
+		       : conn (raise LDAP::Error)
+     LDAP::Mod.new(mod_op, mod_type, mod_vals) : ldap_mod
+     LDAP::Mod#inspect : String
+     LDAP::Mod#mod_op : mod_op
+     LDAP::Mod#mod_type : mod_type
+     LDAP::Mod#mod_vals : mod_vals
+     LDAP::Mod#mod_op=(mod_op)
+     LDAP::Mod#mod_type=(mod_type)
+     LDAP::Mod#mod_vals=(mod_vals)
+     LDAP::Entry#get_dn : dn
+     LDAP::Entry#get_values : vals
+     LDAP::Entry#get_attributes : attrs
+     LDAP::Entry#dn (= get_dn)
+     LDAP::Entry#vals (= get_values)
+     LDAP::Entry#[] (= get_values)
+     LDAP::Entry#attrs (= get_attributes)
+     LDAP::Entry#to_hash : Hash
+     LDAP::Entry#inspect : String
+     LDAP::Control.new : LDAP::Control
+     LDAP::Control#oid : String
+     LDAP::Control#oid=(oid) : oid
+     LDAP::Control#critical : true || false
+     LDAP::Control#critical? : true || false
+     LDAP::Control#critical=(crit) : crit
+     LDAP::Control#value : String
+     LDAP::Control#value=(val) : val
+     LDAP::Control#inspect : String
+
+SSLConn is a subclass of Conn, so its objects have access to the same methods
+as Conn objects.
+
+In ldap/schema.rb:
+
+     LDAP::Conn#schema(attrs = nil, sec = 0, usec = 0) : schema
+     LDAP::Schema#must(oc) : attributes
+     LDAP::Schema#may(oc)  : attributes
+     LDAP::Schema#names(attr) : names
+     LDAP::Schema#sup(oc)  : object class
+
+In ldap/control.rb:
+
+     LDAP::Control.encode(array) : String
+     LDAP::Control#decode : Array
+
+In ldap/ldif.rb:
+
+     LDAP::Entry#to_ldif : LDAP::LDIF::Entry
+     LDAP::Entry#to_s : Alias of LDAP::Entry#to_ldif
+     LDAP::Mod#to_ldif(dn) : LDAP::LDIF::Mod
+     LDAP::Mod#to_s(dn) : Alias of LDAP::Mod#to_ldif
+     LDAP::Record.new(dn, change_type, attrs, mods=nil, ctrls=nil)
+     LDAP::Record#send(conn) : self
+     LDAP::Record#clean : self
+     LDAP::LDIF.mods_to_ldif( dn, *mods )
+     LDAP::LDIF.parse_entry(lines) : LDAP::Record (raise LDAP::LDIFError)
+     LDAP::LDIF.parse_file(file, sort=false)
+			   : self (if a block is given) /
+			     Array (if no block is given)
+
+See also test/*.rb for examples.
+-------------------------------------------------------------------------------
+
+REFERENCES
+
+  * T. Howes, M. Smith (University of Michigan): RFC1823, The LDAP Application
+    Program Interface, August 1995
+  * T. Howes (University of Michigan): RFC1960, A String Representation of LDAP
+    Search Filters, June 1996
+  * M. Wahl, Critical Angle Inc, T. Hows, Netscape Communications Gorp., S.
+    Kille, Isode Limited: Lightweight Directory Access Protocol (v3), December
+    1997
+  * M. Wahl, Critical Angle Inc., A. Coulbeck, Isode Inc., T. Howes, Netscape
+    Communications Corp., S. Kille, Isode Limited: December 1997
+  * M .Wahl, Critical Angle Inc., S. Kille, Isode Ltd., T. Howes, Netscape
+    Communications Corp.: Lightweight Directory Access Protocol (v3): UTF-8
+    String Representation of Distinguished Names, December 1997
+  * T. Howes, Netscape Communications Gorp.: The String Representation of LDAP
+    Search Filters, December 1997
+  * F. Yergeau (Alis Technologies): RFC2279, UTF-8, a transformation format of
+    ISO 10646, October 1998
+  * Netscape Communications Corp.: Netscape Directory SDK
+  * C. Weider, A. Herron, A. Anantha, T. Howes: RFC2696, LDAP Control
+    Extension for Simple Paged Results Manipulation, September 1999
+  * Luiz Ernesto Pinheiro Malere: LDAP Linux HOWTO, February 2000
+  * G. Good: RFC2849, The LDAP Data Interchange Format (LDIF) - Technical
+    Specification, June 2000.
+  * Tim Howes, Mark Smith: Understanding and Deploying LDAP Directory Servers
+  * The OpenLDAP Project: OpenLDAP 2.2 Administrator's Guide, February 2004
+
+Here are some URLs that contain useful information about LDAP:
+
+  * University of Michigan
+    http://www.umich.edu/~dirsvcs/ldap/
+  * OpenLDAP Project
+    http://www.openldap.org/
+  * Netscape Communications
+    http://developer.netscape.com/docs/manuals/communicator/ldap45.htm
+  * Netscape Directory SDK
+    http://www.mozilla.org/directory/
+  * Active Directory Service Interfaces Overview
+    http://www.microsoft.com/windows2000/techinfo/howitworks/activedirectory/
+    adsilinks.asp
+  * LDAP schema repository
+    http://www.hklc.com/ldapschema/
+    http://ldap.hklc.com/
+  * Object Identifiers Registry
+    http://www.alvestrand.no/harald/objectid/
+
+THANKS
+
+This list maybe not correct. If you notice mistakes of this list, please point out.
+
+* atsu@@metallic.co.jp
+* Akinori MUSHA
+* Akira Yamada
+* Pirmin Kalberer
+* Radek Hnilica
+* Hadmut Danisch
+* Yuuzou Gotou
+* Tilo Sloboda
+* Usa Nakamura
+* Mark Kittisopikul
+* Jan Mikkelsen
+* Adam Doligalski
+* Chris Scharf
+* bidon: Patch.
+* Milos Jakubicek: Patch.
+* S. Potter [mbbx6spp]: Gem Packaging Support
