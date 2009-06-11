@@ -1,5 +1,6 @@
 Thu Jun 11 06:51:30 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.9
+  * Fixed LDAP::VERSION. Thanks to Kouhei Sutou
   * Gem Packaging Support. Thanks to S. Potter [mbbx6spp]
 
 Tue Apr 21 14:46:38 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
