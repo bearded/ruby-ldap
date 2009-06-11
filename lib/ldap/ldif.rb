@@ -1,6 +1,8 @@
 # Manipulation of LDIF data.
 #
+#--
 # $Id: ldif.rb,v 1.11 2005/03/03 01:32:07 ianmacd Exp $
+#++
 #
 # Copyright (C) 2005 Ian Macdonald <ian@caliban.org>
 #

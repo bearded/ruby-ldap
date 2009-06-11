@@ -1,9 +1,13 @@
+Thu Jun 11 06:51:30 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.9
+  * Gem Packaging Support. Thanks to S. Potter [mbbx6spp]
+
 Tue Apr 21 14:46:38 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
-        * LDAP_OPT_X_TLS_PROTOCOL changed to LDAP_OPT_X_TLS_PROTOCOL_MIN
+  * LDAP_OPT_X_TLS_PROTOCOL changed to LDAP_OPT_X_TLS_PROTOCOL_MIN
 	  (more information in ITS#5655). Thanks to Milos Jakubicek.
 
 Wed Apr 15 11:38:06 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
-        * Fixed regular expression in LDAP::Schema.attr()
+  * Fixed regular expression in LDAP::Schema.attr()
 	
 Thu Mar 25 08:45:02 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
 	* Version 0.9.8.
