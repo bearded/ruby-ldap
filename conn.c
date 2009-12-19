@@ -1270,6 +1270,7 @@ rb_ldap_conn_search_ext_s (int argc, VALUE argv[], VALUE self)
   RB_LDAP_DATA *ldapdata;
   LDAPMessage *cmsg;
   LDAP *cldap;
+  VALUE rc_ary = Qnil;
 
   rb_ldap_conn_search_ext_i (argc, argv, self, &ldapdata, &cmsg);
   cldap = ldapdata->ldap;
@@ -1278,6 +1279,11 @@ rb_ldap_conn_search_ext_s (int argc, VALUE argv[], VALUE self)
       || ldapdata->err == LDAP_SIZELIMIT_EXCEEDED)
     {
       void *pass_data[] = { (void *) cldap, (void *) cmsg };
+
+      rc_ary = rb_ldap_parse_result (cldap, cmsg);
+      rb_iv_set (self, "@referrals", rb_ary_shift (rc_ary));
+      rb_iv_set (self, "@controls", rb_ary_shift (rc_ary));
+
       rb_ensure (rb_ldap_conn_search_b, (VALUE) pass_data,
 		 rb_ldap_msgfree, (VALUE) cmsg);
     };
@@ -1327,6 +1333,7 @@ rb_ldap_conn_search_ext2_s (int argc, VALUE argv[], VALUE self)
   LDAPMessage *cmsg;
   LDAP *cldap;
   VALUE ary;
+  VALUE rc_ary = Qnil;
 
   rb_ldap_conn_search_ext_i (argc, argv, self, &ldapdata, &cmsg);
   cldap = ldapdata->ldap;
@@ -1336,6 +1343,11 @@ rb_ldap_conn_search_ext2_s (int argc, VALUE argv[], VALUE self)
       || ldapdata->err == LDAP_SIZELIMIT_EXCEEDED)
     {
       void *pass_data[] = { (void *) cldap, (void *) cmsg, (void *) ary };
+
+      rc_ary = rb_ldap_parse_result (cldap, cmsg);
+      rb_iv_set (self, "@referrals", rb_ary_shift (rc_ary));
+      rb_iv_set (self, "@controls", rb_ary_shift (rc_ary));
+
       rb_ensure (rb_ldap_conn_search2_b, (VALUE) pass_data,
 		 rb_ldap_msgfree, (VALUE) cmsg);
     }
