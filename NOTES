@@ -1,10 +1,18 @@
 $Id: NOTES,v 1.4 2006/08/09 11:22:25 ianmacd Exp $
 
+0.9.10
+-----
+
+Added controls and referral extraction to #search_ext and #search_ext2.
+Thanks to Michael Granger.
+
+
 0.9.9
 -----
 
 Supported OpenLDAP 2.4.15 and higher. Thanks to Milos Jakubicek.
 Gem Packaging Support. Thanks to S. Potter [mbbx6spp].
+
 
 0.9.8
 -----

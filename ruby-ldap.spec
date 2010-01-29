@@ -5,7 +5,7 @@
 %define rdoc %( type rdoc > /dev/null && echo 1 || echo 0 )
 Summary: LDAP API (RFC1823) library module for Ruby.
 Name: ruby-ldap
-Version: 0.9.9
+Version: 0.9.10
 Release: 1
 License: Redistributable
 Group: Applications/Ruby
