@@ -1,7 +1,5 @@
                  Ruby/LDAP -- A Ruby extension library for LDAP
 
-$Id: README,v 1.19 2009/03/19 15:25:20 alexey.chebotar Exp $
-
 Copyright (C) 2000-2004 Takaaki Tateishi <ttate@users.sourceforge.net>      
 Copyright (C) 2005-2006 Ian Macdonald <ian@caliban.org>
 Copyright (C) 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
@@ -265,3 +263,4 @@ This list maybe not correct. If you notice mistakes of this list, please point o
 * S. Potter [mbbx6spp]: Gem Packaging Support
 * Kouhei Sutou
 * Michael Granger: Patch.
+* Anthony M. Martinez: Patch.

@@ -1,4 +1,17 @@
-$Id: NOTES,v 1.4 2006/08/09 11:22:25 ianmacd Exp $
+0.9.11
+-----
+
+Allow passing SASL interaction options
+    
+This adds a hash parameter "options" to LDAP::Conn.sasl_bind, which
+can take :authzid, :authcid, and :realm (and corresponding strings),
+for SASL authentication.
+    
+Also, refactored the rb_scan_args inside rb_ldap_conn_sasl_bind to use
+C's case fallthrough, leading to less code repetition.
+
+Tnahks to Anthony M. Martinez.
+
 
 0.9.10
 -----

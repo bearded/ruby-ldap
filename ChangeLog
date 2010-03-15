@@ -1,8 +1,12 @@
+Mon Mar 15 19:15:49 UTC 2010 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.11
+  * Allow passing SASL interaction options.
+    Thanks to Anthony M. Martinez.
+
 Fri Jan 29 07:50:30 UTC 2010 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.10
   * Added controls and referral extraction to #search_ext and 
     #search_ext2. Thanks to Michael Granger.
-
 
 Thu Jun 11 06:51:30 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.9
