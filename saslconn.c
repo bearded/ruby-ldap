@@ -16,17 +16,76 @@ extern VALUE rb_ldap_conn_initialize (int argc, VALUE argv[], VALUE self);
 extern VALUE rb_ldap_conn_rebind (VALUE self);
 
 #if defined(HAVE_LDAP_SASL_BIND_S)
-int
-rb_ldap_sasl_interaction (LDAP * ld, unsigned flags, void *defaults, void *in)
+#include <sasl/sasl.h>
+VALUE
+rb_ldap_indifferent_hash_aref(VALUE hash, const char *key)
 {
-  /* not implemented */
+  VALUE symval = rb_hash_aref(hash, ID2SYM(rb_intern(key)));
+  if (!NIL_P(symval))
+    {
+      return symval;
+    }
+  return rb_hash_aref(hash, rb_str_new2(key)); /* this could be Qnil */
+}
+
+int
+rb_ldap_sasl_interaction (LDAP * ld, unsigned flags, void *de, void *in)
+{
+  sasl_interact_t *interact = in;
+  VALUE options   = (VALUE)de;
+
+  VALUE defvalue;
+  const char *dflt = NULL;
+
+  if (ld == NULL)
+    {
+      return LDAP_PARAM_ERROR;
+    }
+  if (flags == LDAP_SASL_INTERACTIVE)
+    {
+      rb_raise (rb_eLDAP_Error, "interactive bind not supported.");
+    }
+  while (!NIL_P(options) && interact->id != SASL_CB_LIST_END)
+    {
+      dflt = interact->defresult;
+      switch (interact->id)
+        {
+          case SASL_CB_GETREALM:
+            if (!NIL_P(defvalue = rb_ldap_indifferent_hash_aref(options, "realm")))
+            {
+              dflt = StringValuePtr(defvalue);
+            }
+            break;
+          case SASL_CB_AUTHNAME:
+            if (!NIL_P(defvalue = rb_ldap_indifferent_hash_aref(options, "authcid")))
+            {
+              dflt = StringValuePtr(defvalue);
+            }
+            break;
+          case SASL_CB_USER:
+            if (!NIL_P(defvalue = rb_ldap_indifferent_hash_aref(options, "authzid")))
+            {
+              dflt = StringValuePtr(defvalue);
+            }
+            break;
+          default:
+            /* Nothing. */
+            break;
+        }
+      if (dflt != NULL)
+        {
+          interact->result = dflt;
+          interact->len    = strlen(dflt);
+        }
+      interact++;
+    }
   return LDAP_SUCCESS;
 }
 
 /*
  * call-seq:
- * conn.sasl_bind(dn=nil, mech=nil, cred=nil, sctrls=nil, cctrls=nil)  => self
- * conn.sasl_bind(dn=nil, mech=nil, cred=nil, sctrls=nil, cctrls=nil)
+ * conn.sasl_bind(dn=nil, mech=nil, cred=nil, sctrls=nil, cctrls=nil, sasl_options=nil)  => self
+ * conn.sasl_bind(dn=nil, mech=nil, cred=nil, sctrls=nil, cctrls=nil, sasl_options=nil)
  *   { |conn| }  => nil
  *
  * Bind an LDAP connection, using the DN, +dn+, the mechanism, +mech+, and the
@@ -35,15 +94,19 @@ rb_ldap_sasl_interaction (LDAP * ld, unsigned flags, void *defaults, void *in)
  * +sctrls+ is an array of server controls, whilst +cctrls+ is an array of
  * client controls.
  *
- * and the bind method, +method+. If a block is given, +self+ is yielded to
- * the block.
+ * sasl_options is a hash which should have the following keys:
+ *
+ * - +:authcid+ and +:authzid+ for alternate SASL authentication
+ * - +realm+ to specify the SASL realm
+ *
+ * If a block is given, +self+ is yielded to the block.
  */
 VALUE
 rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
 {
   RB_LDAP_DATA *ldapdata;
 
-  VALUE arg1, arg2, arg3, arg4, arg5;
+  VALUE arg1, arg2, arg3, arg4, arg5, sasl_options = Qnil;
   int version;
   char *dn = NULL;
   char *mechanism = NULL;
@@ -81,36 +144,26 @@ rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
     {
       rb_raise (rb_eLDAP_Error, "already bound.");
     };
-  switch (rb_scan_args (argc, argv, "23", &arg1, &arg2, &arg3, &arg4, &arg5))
+
+  switch (rb_scan_args (argc, argv, "24", &arg1, &arg2, &arg3, &arg4, &arg5, &sasl_options))
     {
+    case 6:
+      /* nothing. this requires credentials to be parsed first. we'll get defaults after arg-scanning */
+    case 5:
+      clientctrls = rb_ldap_get_controls (arg5);
+      /* down seems more likely */
+    case 4:
+      serverctrls = rb_ldap_get_controls (arg4);
+      /* down seems more likely */
+    case 3:
+      cred->bv_val = StringValueCStr (arg3);
+      cred->bv_len = RSTRING_LEN (arg3);
+      /* down seems more likely */
     case 2:			/* don't need the cred for GSSAPI */
       dn = StringValuePtr (arg1);
       mechanism = StringValuePtr (arg2);
-      serverctrls = NULL;
-      clientctrls = NULL;
       if (rb_iv_get (self, "@sasl_quiet") == Qtrue)
-	sasl_flags = LDAP_SASL_QUIET;
-      break;
-    case 3:
-      dn = StringValuePtr (arg1);
-      mechanism = StringValuePtr (arg2);
-      cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING_LEN (arg3);
-      break;
-    case 4:
-      dn = StringValuePtr (arg1);
-      mechanism = StringValuePtr (arg2);
-      cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING_LEN (arg3);
-      serverctrls = rb_ldap_get_controls (arg4);
-      break;
-    case 5:
-      dn = StringValuePtr (arg1);
-      mechanism = StringValuePtr (arg2);
-      cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING_LEN (arg3);
-      serverctrls = rb_ldap_get_controls (arg4);
-      clientctrls = rb_ldap_get_controls (arg5);
+        sasl_flags = LDAP_SASL_QUIET;
       break;
     default:
       rb_bug ("rb_ldap_conn_bind_s");
@@ -129,7 +182,7 @@ rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
   ldapdata->err =
     ldap_sasl_interactive_bind_s (ldapdata->ldap, dn, mechanism,
 				  serverctrls, clientctrls, sasl_flags,
-				  rb_ldap_sasl_interaction, NULL);
+				  rb_ldap_sasl_interaction, (void*)sasl_options);
 
   if (ldapdata->err == LDAP_SASL_BIND_IN_PROGRESS)
     {
