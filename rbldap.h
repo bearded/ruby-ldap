@@ -162,16 +162,18 @@ VALUE rb_ldap_mod_vals (VALUE);
   RB_LDAPENTRY_DATA *ptr; \
   Data_Get_Struct(obj, struct rb_ldapmsg_data, ptr); \
   if( ! ptr->msg ){ \
+    VALUE value = rb_inspect(obj); \
     rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
-	     STR2CSTR(rb_inspect(obj))); \
+	     StringValuePtr(value)); \
   }; \
 }
 
 #define GET_LDAPENTRY_DATA(obj,ptr) { \
   Data_Get_Struct(obj, struct rb_ldapentry_data, ptr); \
   if( ! ptr->msg ){ \
+    VALUE value = rb_inspect(obj); \
     rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
-	     STR2CSTR(rb_inspect(obj))); \
+	     StringValuePtr(value)); \
   }; \
 }
 
