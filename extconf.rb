@@ -101,8 +101,13 @@ if( !($use_netscape || $use_openldap1 || $use_openldap2 || $use_wldap32) )
     print("--with-netscape=5")
     $use_netscape = "5"
   else
-    print("--with-openldap2\n")
-    $use_openldap2 = true
+    if RUBY_PLATFORM =~ /-(:?mingw32|mswin32)/
+      print("--with-wldap32\n")
+      $use_wldap32 = true
+    else
+      print("--with-openldap2\n")
+      $use_openldap2 = true
+    end
   end
 end
 if( $use_netscape == true )
