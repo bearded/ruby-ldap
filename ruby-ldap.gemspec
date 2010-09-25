@@ -21,6 +21,7 @@ It provides the interface to some LDAP libraries (e.g. OpenLDAP, Netscape SDK an
   s.files += Dir.glob('**/*.rb')
   s.files += Dir.glob('**/*.h')
   s.files += Dir.glob('**/*.c')
+  s.files += Dir.glob('**/*.def')
 
   s.extensions = ['extconf.rb']
 end
