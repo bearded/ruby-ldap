@@ -18,6 +18,7 @@ rb_ldap_mod_free (RB_LDAPMOD_DATA * data)
       char **svals;
       int i;
 
+      xfree(data->mod->mod_type);
       if (data->mod->mod_op & LDAP_MOD_BVALUES)
 	{
 	  bvals = data->mod->mod_vals.modv_bvals;
@@ -53,7 +54,8 @@ rb_ldap_new_mod (int mod_op, char *mod_type, char **modv_strvals)
 
   mod = ALLOC_N (LDAPMod, 1);
   mod->mod_op = mod_op;
-  mod->mod_type = mod_type;
+  mod->mod_type = ALLOC_N(char,strlen(mod_type) + 1);
+  strcpy(mod->mod_type, mod_type);
   mod->mod_vals.modv_strvals = modv_strvals;
 
   return mod;
@@ -84,7 +86,8 @@ rb_ldap_new_mod2 (int mod_op, char *mod_type, struct berval **modv_bvals)
 
   mod = ALLOC_N (LDAPMod, 1);
   mod->mod_op = mod_op;
-  mod->mod_type = mod_type;
+  mod->mod_type = ALLOC_N(char,strlen(mod_type) + 1);
+  strcpy(mod->mod_type, mod_type);
   mod->mod_vals.modv_bvals = modv_bvals;
 
   return mod;
@@ -149,7 +152,7 @@ rb_ldap_mod_initialize (int argc, VALUE argv[], VALUE self)
     return Qnil;
 
   mod_op = NUM2INT (op);
-  mod_type = StringValueCStr (type);
+  mod_type = RSTRING_PTR(type);
   Check_Type (vals, T_ARRAY);
 
   if (mod_op & LDAP_MOD_BVALUES)
