@@ -170,6 +170,26 @@ rb_ldap_conn_s_open (int argc, VALUE argv[], VALUE klass)
 
 /*
  * call-seq:
+ * LDAP::Conn.open_uri(uri)  => LDAP::Conn
+ *
+ * Return a new LDAP::Conn connection to the server described with +uri+.
+ */
+VALUE
+rb_ldap_conn_s_open_uri (VALUE klass, VALUE uri)
+{
+  LDAP  *cldap = NULL;
+  int    rc;
+
+  rc = ldap_initialize (&cldap, StringValueCStr (uri));
+
+  if (rc || cldap == NULL)
+    rb_raise (rb_eLDAP_ResultError, "can't open an LDAP session");
+  
+  return rb_ldap_conn_new (klass, cldap);
+};
+
+/*
+ * call-seq:
  * conn.start_tls  => nil
  *
  * Initiate START_TLS for the connection, +conn+.
@@ -1779,6 +1799,7 @@ Init_ldap_conn ()
                              rb_ldap_conn_s_allocate, 0);
 #endif
   rb_define_singleton_method (rb_cLDAP_Conn, "open", rb_ldap_conn_s_open, -1);
+  rb_define_singleton_method (rb_cLDAP_Conn, "open_uri", rb_ldap_conn_s_open_uri, 1);
   rb_define_singleton_method (rb_cLDAP_Conn, "set_option",
 			      rb_ldap_conn_s_set_option, 2);
   rb_define_singleton_method (rb_cLDAP_Conn, "get_option",
