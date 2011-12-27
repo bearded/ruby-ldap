@@ -113,7 +113,7 @@ rb_ldap_entry_get_attributes (VALUE self)
   RB_LDAPENTRY_DATA *edata;
   VALUE vals;
   char *attr;
-  BerElement *ber;
+  BerElement *ber = NULL;
 
   GET_LDAPENTRY_DATA (self, edata);
 
