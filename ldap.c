@@ -224,9 +224,6 @@ extern void Init_ldap_entry ();
 extern void Init_ldap_conn ();
 extern void Init_ldap_sslconn ();
 extern void Init_ldap_saslconn ();
-#ifdef USE_SSL_CLIENTAUTH
-extern void Init_ldap_clientauth ();
-#endif
 extern void Init_ldap_mod ();
 extern void Init_ldap_misc ();
 
@@ -635,9 +632,6 @@ Init_ldap ()
   Init_ldap_conn ();
   Init_ldap_sslconn ();
   Init_ldap_saslconn ();
-#ifdef USE_SSL_CLIENTAUTH
-  Init_ldap_clientauth();
-#endif
   Init_ldap_entry ();
   Init_ldap_mod ();
   Init_ldap_misc ();

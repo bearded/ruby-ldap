@@ -1,17 +1,3 @@
-Tue Dec 27 13:13:07 UTC 2011 Alexey Chebotar <alexey.chebotar@gmail.com>
-  * Version 0.9.12
-  * Enable client certificate authentication for mozilla ldap 6.0 only.
-    Thank to Yuri Arabadji.
-  * New patch for LDAP::Mod data corruption. Thanks to Aprotim Sanyal.
-  * Modify mod_type dangling pointer corruption. Thank you, anon!
-  * Fixed bug in ldap/ldif.rb (GH-6). Thanks to bbense.
-  * Added functions: LDAP::Conn.open_uri(uri), LDAP::explode_dn(dn, notypes),
-    LDAP::explode_rdn(rdn, notypes). Thanks to Marek Veber.
-  * Fixed many memory leaks. Thanks to Marek Veber.
-  * Fixed compile with ruby 1.9.2. Thanks to Hiroki Najima.
-  * On windows, the default ldap library became wldap32.
-    Thanks to Hiroki Najima.
-
 Mon Mar 15 19:15:49 UTC 2010 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.11
   * Allow passing SASL interaction options.

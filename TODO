@@ -3,16 +3,6 @@
 To-do list
 ----------
 
-- Setup a vagrant boxes for tests:
-* 32/64 Ubuntu Lucid                ( ruby-ldap http://packages.ubuntu.com/lucid/libldap-ruby1.8 )
-* 32/64 Debian 6.0.3                ( ruby-ldap http://packages.debian.org/sid/ruby/libldap-ruby1.8 )
-* 32/64 Arch 2011.08.19             ( ruby-ldap https://aur.archlinux.org/packages.php?ID=13471 )
-* 32/64 FreeBSD 8.2 (9.0-RC1, 7.4)  ( ruby-ldap http://www.freebsd.org/cgi/cvsweb.cgi/ports/net/ruby-ldap/ )
-
-
-Ian's Td-do list
-----------
-
 - Support for more LDAPv3 controls and extensions.
 
 - DSML support.

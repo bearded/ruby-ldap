@@ -30,7 +30,7 @@
 #define RB_LDAP_PATCH_VERSION 11
 #define RB_LDAP_VERSION "0.9.11"
 
-#define LDAP_GET_OPT_MAX_BUFFER_SIZE    (1024) /* >= sizeof(LDAPAPIInfo) */
+#define LDAP_GET_OPT_MAX_BUFFER_SIZE    (1024)	/* >= sizeof(LDAPAPIInfo) */
 
 #define RB_LDAP_SET_STR(var,val) {\
    Check_Type(val, T_STRING); \
@@ -140,13 +140,13 @@ VALUE rb_ldap_mod_vals (VALUE);
 };
 
 #define Check_LDAP_Result(err) { \
-  if( (err) != LDAP_SUCCESS && (err) != LDAP_SIZELIMIT_EXCEEDED ){ \
+  if( err != LDAP_SUCCESS && err != LDAP_SIZELIMIT_EXCEEDED ){ \
     rb_raise(rb_eLDAP_ResultError, ldap_err2string(err)); \
   } \
 }
 
 #define Check_LDAP_OPT_Result(err) { \
-  if( (err) != LDAP_OPT_SUCCESS ){ \
+  if( err != LDAP_OPT_SUCCESS ){ \
     rb_raise(rb_eLDAP_ResultError, ldap_err2string(err)); \
   } \
 }
@@ -164,7 +164,7 @@ VALUE rb_ldap_mod_vals (VALUE);
   if( ! ptr->msg ){ \
     VALUE value = rb_inspect(obj); \
     rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
-            StringValuePtr(value)); \
+	     StringValuePtr(value)); \
   }; \
 }
 
@@ -173,7 +173,7 @@ VALUE rb_ldap_mod_vals (VALUE);
   if( ! ptr->msg ){ \
     VALUE value = rb_inspect(obj); \
     rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
-            StringValuePtr(value)); \
+	     StringValuePtr(value)); \
   }; \
 }
 

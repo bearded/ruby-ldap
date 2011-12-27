@@ -763,7 +763,7 @@ rb_ldap_conn_get_errno (VALUE self)
   GET_LDAP_DATA (self, ldapdata);
 
 #ifdef USE_NETSCAPE_SDK
-  int cerr = ldap_get_lderrno (ldapdata->ldap, NULL, NULL);
+  cerr = ldap_get_lderrno (ldapdata->ldap, NULL, NULL);
   err = INT2NUM (cerr);
 #else
 # ifdef USE_OPENLDAP1
