@@ -17,7 +17,7 @@ module LDAP
     #
     def Control.encode( *vals )
       encoded_vals = []
-     
+
       vals.each do |val|
         encoded_vals <<
           case val
@@ -29,7 +29,7 @@ module LDAP
             # What other types may exist?
           end
       end
-   
+
       OpenSSL::ASN1::Sequence.new( encoded_vals ).to_der
     end
 
@@ -40,7 +40,7 @@ module LDAP
       values = []
 
       OpenSSL::ASN1::decode( self.value ).value.each do |val|
-	values << val.value
+        values << val.value
       end
 
       values

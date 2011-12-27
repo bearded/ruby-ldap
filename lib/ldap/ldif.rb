@@ -37,22 +37,22 @@ module LDAP
     #
     def send( conn )
       if @change_type == :MODRDN
-	# TODO: How do we deal with 'newsuperior'?
-	# The LDAP API's ldap_modrdn2_s() function doesn't seem to use it.
-	return conn.modrdn( @dn, @attrs['newrdn'], @attrs['deleteoldrdn'] )
+        # TODO: How do we deal with 'newsuperior'?
+        # The LDAP API's ldap_modrdn2_s() function doesn't seem to use it.
+        return conn.modrdn( @dn, @attrs['newrdn'], @attrs['deleteoldrdn'] )
       end
 
       # Mask out the LDAP_MOD_BVALUES bit, as it's irrelevant here.
       case @change_type & ~LDAP_MOD_BVALUES
       when LDAP_MOD_ADD
-	@controls == [] ? conn.add( @dn, @attrs ) :
-			  conn.add_ext( @dn, @attrs, @controls, [] )
+        @controls == [] ? conn.add( @dn, @attrs ) :
+        conn.add_ext( @dn, @attrs, @controls, [] )
       when LDAP_MOD_DELETE
-	@controls == [] ? conn.delete( @dn ) :
-			  conn.delete_ext( @dn, @controls, [] )
+        @controls == [] ? conn.delete( @dn ) :
+        conn.delete_ext( @dn, @controls, [] )
       when LDAP_MOD_REPLACE
-	@controls == [] ? conn.modify( @dn, @mods ) :
-			  conn.modify_ext( @dn, @mods, @controls, [] )
+        @controls == [] ? conn.modify( @dn, @mods ) :
+        conn.modify_ext( @dn, @mods, @controls, [] )
       end
 
       self
@@ -75,7 +75,7 @@ module LDAP
       #
       %w[ creatorsname createtimestamp modifiersname modifytimestamp
           entrycsn entryuuid structuralobjectclass ].each do |attr|
-	@attrs.delete( attr )
+        @attrs.delete( attr )
       end
 
       # Clean out duplicate attribute values.
@@ -132,7 +132,7 @@ module LDAP
       unless url.sub!( %r(^file://), '' )
         raise ArgumentError, "Bad external file reference: #{url}"
       end
-  
+
       # Slurp an external file.
       # TODO: Support other URL types in the future.
       File.open( url ).readlines( nil )[0]
@@ -150,10 +150,10 @@ module LDAP
           sep = '::'
           val = base64_encode( val, true )
         end
-      
+
         firstline_len = LINE_LENGTH - ( "%s%s " % [ attr, sep ] ).length
         ldif << "%s%s %s\n" % [ attr, sep, val.slice!( 0..firstline_len ) ]
-      
+
         while val.length > 0
           ldif << " %s\n" % val.slice!( 0..LINE_LENGTH - 1 )
         end
@@ -182,173 +182,172 @@ module LDAP
       hash = {}
       mods = {}
       mod_type = nil
-      
+
       lines.each do |line|
-	# Skip (continued) comments.
-	if line =~ /^#/ || ( comment && line[0..0] == ' ' )
-	  comment = true
-	  next
-	end
+        # Skip (continued) comments.
+        if line =~ /^#/ || ( comment && line[0..0] == ' ' )
+          comment = true
+          next
+        end
 
-	# Skip blank lines.
-	next if line =~ /^$/
+        # Skip blank lines.
+        next if line =~ /^$/
 
-	# Reset mod type if this entry has more than one mod to make.
-	# A '-' continuation is only valid if we've already had a
-	# 'changetype: modify' line.
-	if line =~ /^-$/ && change_type == LDAP_MOD_REPLACE
-	  next
-	end
+        # Reset mod type if this entry has more than one mod to make.
+        # A '-' continuation is only valid if we've already had a
+        # 'changetype: modify' line.
+        if line =~ /^-$/ && change_type == LDAP_MOD_REPLACE
+          next
+        end
 
-	line.chomp!
+        line.chomp!
 
-	# N.B. Attributes and values can be separated by one or two colons,
-	# or one colon and a '<'. Either of these is then followed by zero
-	# or one spaces.
-	if md = line.match( /^[^ ].*?((:[:<]?) ?)/ )
+        # N.B. Attributes and values can be separated by one or two colons,
+        # or one colon and a '<'. Either of these is then followed by zero
+        # or one spaces.
+        if md = line.match( /^[^ ].*?((:[:<]?) ?)/ )
 
-	  # If previous value was Base64-encoded and is not continued,
-	  # we need to decode it now.
-	  if sep == '::'
-	    if mod_type
-	      mods[mod_type][attr][-1] =
-		base64_decode( mods[mod_type][attr][-1] )
-		bvalues << attr if unsafe_char?( mods[mod_type][attr][-1] )
-	    else
-	      hash[attr][-1] = base64_decode( hash[attr][-1] )
-	      bvalues << attr if unsafe_char?( hash[attr][-1] )
-	    end
+          # If previous value was Base64-encoded and is not continued,
+          # we need to decode it now.
+          if sep == '::'
+            if mod_type
+              mods[mod_type][attr][-1] =
+                base64_decode( mods[mod_type][attr][-1] )
+              bvalues << attr if unsafe_char?( mods[mod_type][attr][-1] )
+            else
+              hash[attr][-1] = base64_decode( hash[attr][-1] )
+              bvalues << attr if unsafe_char?( hash[attr][-1] )
+            end
+          end
 
-	  end
+          # Found a attr/value line.
+          attr, val = line.split( md[1], 2 )
+          attr.downcase!
 
-	  # Found a attr/value line.
-	  attr, val = line.split( md[1], 2 )
-	  attr.downcase!
+          # Attribute must be ldap-oid / (ALPHA *(attr-type-chars))
+          if attr !~ /^(?:(?:\d+\.)*\d+|[[:alnum:]-]+)(?:;[[:alnum:]-]+)*$/
+            raise LDIFError, "Invalid attribute: #{attr}"
+          end
 
-	  # Attribute must be ldap-oid / (ALPHA *(attr-type-chars))
-	  if attr !~ /^(?:(?:\d+\.)*\d+|[[:alnum:]-]+)(?:;[[:alnum:]-]+)*$/
-	    raise LDIFError, "Invalid attribute: #{attr}"
-	  end
+          if attr == 'dn'
+            header = false
+            change_type = nil
+            controls = []
+          end
+          sep = md[2]
 
-	  if attr == 'dn'
-	    header = false
-	    change_type = nil
-	    controls = []
-	  end
-	  sep = md[2]
+          val = read_file( val ) if sep == ':<'
 
-	  val = read_file( val ) if sep == ':<'
+          case attr
+          when 'version'
+            # Check the LDIF version.
+            if header
+              if val != '1'
+                raise LDIFError, "Unsupported LDIF version: #{val}"
+              else
+                header = false
+                next
+              end
+            end
 
-	  case attr
-	  when 'version'
-	    # Check the LDIF version.
-	    if header
-	      if val != '1'
-		raise LDIFError, "Unsupported LDIF version: #{val}"
-	      else
-		header = false
-		next
-	      end
-	    end
+          when 'changetype'
+            change_type = case val
+              when 'add'       then LDAP_MOD_ADD
+              when 'delete'    then LDAP_MOD_DELETE
+              when 'modify'    then LDAP_MOD_REPLACE
+              when /^modr?dn$/ then :MODRDN
+            end
 
-	  when 'changetype'
-	    change_type = case val
-			    when 'add'	     then LDAP_MOD_ADD
-			    when 'delete'    then LDAP_MOD_DELETE
-			    when 'modify'    then LDAP_MOD_REPLACE
-			    when /^modr?dn$/ then :MODRDN
-			  end
+            raise LDIFError, "Invalid change type: #{attr}" unless change_type
 
-	    raise LDIFError, "Invalid change type: #{attr}" unless change_type
+          when 'add', 'delete', 'replace'
+            unless change_type == LDAP_MOD_REPLACE
+              raise LDIFError, "Cannot #{attr} here."
+            end
 
-	  when 'add', 'delete', 'replace'
-	    unless change_type == LDAP_MOD_REPLACE
-	      raise LDIFError, "Cannot #{attr} here."
-	    end
+            mod_type = case attr
+              when 'add'     then LDAP_MOD_ADD
+              when 'delete'  then LDAP_MOD_DELETE
+              when 'replace' then LDAP_MOD_REPLACE
+            end
 
-	    mod_type = case attr
-		         when 'add'	then LDAP_MOD_ADD
-		         when 'delete'	then LDAP_MOD_DELETE
-		         when 'replace'	then LDAP_MOD_REPLACE
-		       end
+            # In this case val is actually an attribute and should be lowercased. 
+            mods[mod_type] ||= {}
+            mods[mod_type][val.downcase] ||= []
 
-	    mods[mod_type] ||= {}
-	    mods[mod_type][val] ||= []
+          when 'control'
+            oid, criticality = val.split( / /, 2 )
 
-	  when 'control'
+            unless oid =~ /(?:\d+\.)*\d+/
+              raise LDIFError, "Bad control OID: #{oid}" 
+            end
 
-	    oid, criticality = val.split( / /, 2 )
+            if criticality
+              md = criticality.match( /(:[:<]?) ?/ )
+              ctl_sep = md[1] if md
+              criticality, value = criticality.split( /:[:<]? ?/, 2 )
 
-	    unless oid =~ /(?:\d+\.)*\d+/
-	      raise LDIFError, "Bad control OID: #{oid}" 
-	    end
+              if criticality !~ /^(?:true|false)$/
+                raise LDIFError, "Bad control criticality: #{criticality}"
+              end
 
-	    if criticality
-	      md = criticality.match( /(:[:<]?) ?/ )
-	      ctl_sep = md[1] if md
-	      criticality, value = criticality.split( /:[:<]? ?/, 2 )
+              # Convert 'true' or 'false'. to_boolean would be nice. :-)
+              criticality = eval( criticality )
+            end
 
-	      if criticality !~ /^(?:true|false)$/
-	        raise LDIFError, "Bad control criticality: #{criticality}"
-	      end
+            if value
+              value = base64_decode( value ) if ctl_sep == '::'
+              value = read_file( value ) if ctl_sep == ':<'
+              value = Control.encode( value )
+            end
 
-	      # Convert 'true' or 'false'. to_boolean would be nice. :-)
-	      criticality = eval( criticality )
-	    end
+            controls << Control.new( oid, value, criticality )
 
-	    if value
-	      value = base64_decode( value ) if ctl_sep == '::'
-	      value = read_file( value ) if ctl_sep == ':<'
-	      value = Control.encode( value )
-	    end
+          else
+            # Convert modrdn's deleteoldrdn from '1' to true, anything else
+            # to false. Should probably raise an exception if not '0' or '1'.
+            #
+            if change_type == :MODRDN && attr == 'deleteoldrdn'
+              val = val == '1' ? true : false
+            end
 
-	    controls << Control.new( oid, value, criticality )
-	  else
+            if change_type == LDAP_MOD_REPLACE
+              mods[mod_type][attr] << val
+            else
+              hash[attr] ||= []
+              hash[attr] << val
+            end
 
-	    # Convert modrdn's deleteoldrdn from '1' to true, anything else
-	    # to false. Should probably raise an exception if not '0' or '1'.
-	    #
-	    if change_type == :MODRDN && attr == 'deleteoldrdn'
-	      val = val == '1' ? true : false
-	    end
+            comment = false
 
-	    if change_type == LDAP_MOD_REPLACE
-	      mods[mod_type][attr] << val
-	    else
-	      hash[attr] ||= []
-	      hash[attr] << val
-	    end
+            # Make a note of this attribute if value is binary.
+            bvalues << attr if unsafe_char?( val )
 
-	    comment = false
+          end
 
-	    # Make a note of this attribute if value is binary.
-	    bvalues << attr if unsafe_char?( val )
-	  end
+        else
+          # Check last line's separator: if not a binary value, the
+          # continuation line must be indented. If a comment makes it this
+          # far, that's also an error.
+          #
+          if sep == ':' && line[0..0] != ' ' || comment
+            raise LDIFError, "Improperly continued line: #{line}"
+          end
 
-	else
+          # OK; this is a valid continuation line.
 
-	  # Check last line's separator: if not a binary value, the
-	  # continuation line must be indented. If a comment makes it this
-	  # far, that's also an error.
-	  #
-	  if sep == ':' && line[0..0] != ' ' || comment
-	    raise LDIFError, "Improperly continued line: #{line}"
-	  end
+          # Append line except for initial space.
+          line[0] = '' if line[0..0] == ' '
 
-	  # OK; this is a valid continuation line.
+          if change_type == LDAP_MOD_REPLACE
+            # Append to last value of current mod type.
+            mods[mod_type][attr][-1] << line
+          else
+            # Append to last value.
+            hash[attr][-1] << line
+          end
+        end
 
-	  # Append line except for initial space.
-	  line[0] = '' if line[0..0] == ' '
-
-	  if change_type == LDAP_MOD_REPLACE
-	    # Append to last value of current mod type.
-	    mods[mod_type][attr][-1] << line
-	  else
-	    # Append to last value.
-	    hash[attr][-1] << line
-	  end
-	end
-	
       end
 
       # If last value in LDIF entry was Base64-encoded, we need to decode
@@ -356,11 +355,11 @@ module LDAP
       if sep == '::'
         if mod_type
           mods[mod_type][attr][-1] =
-	    base64_decode( mods[mod_type][attr][-1] )
-	  bvalues << attr if unsafe_char?( mods[mod_type][attr][-1] )
+            base64_decode( mods[mod_type][attr][-1] )
+          bvalues << attr if unsafe_char?( mods[mod_type][attr][-1] )
         else
           hash[attr][-1] = base64_decode( hash[attr][-1] )
-	  bvalues << attr if unsafe_char?( hash[attr][-1] )
+          bvalues << attr if unsafe_char?( hash[attr][-1] )
         end
       end
 
@@ -377,47 +376,43 @@ module LDAP
 
       case change_type
       when LDAP_MOD_ADD
+        mods[LDAP_MOD_ADD] = []
 
-	mods[LDAP_MOD_ADD] = []
+        hash.each do |attr_local, val|
+          if bvalues.include?( attr_local )
+            ct = LDAP_MOD_ADD | LDAP_MOD_BVALUES
+          else
+            ct = LDAP_MOD_ADD
+          end
 
-	hash.each do |attr_local, val|
-	  if bvalues.include?( attr_local )
-	    ct = LDAP_MOD_ADD | LDAP_MOD_BVALUES
-	  else
-	    ct = LDAP_MOD_ADD
-	  end
-
-	  mods[LDAP_MOD_ADD] << LDAP.mod( ct, attr_local, val )
-	end
+          mods[LDAP_MOD_ADD] << LDAP.mod( ct, attr_local, val )
+        end
 
       when LDAP_MOD_DELETE
-
-	# Nothing to do.
+        # Nothing to do.
 
       when LDAP_MOD_REPLACE
+        raise LDIFError, "mods should not be empty" if mods == {}
 
-	raise LDIFError, "mods should not be empty" if mods == {}
+        new_mods = {}
 
-	new_mods = {}
+        mods.each do |mod_type_local,attrs|
+          attrs.each_key do |attr_local|
+            if bvalues.include?( attr_local )
+              mt = mod_type_local | LDAP_MOD_BVALUES
+            else
+              mt = mod_type_local
+            end
 
-	mods.each do |mod_type_local,attrs|
-	  attrs.each_key do |attr_local|
-	    if bvalues.include?( attr_local )
-	      mt = mod_type_local | LDAP_MOD_BVALUES
-	    else
-	      mt = mod_type_local
-	    end
+            new_mods[mt] ||= {}
+            new_mods[mt][attr_local] = mods[mod_type_local][attr_local]
+          end
+        end
 
-	    new_mods[mt] ||= {}
-	    new_mods[mt][attr_local] = mods[mod_type_local][attr_local]
-	  end
-	end
-
-	mods = new_mods
+        mods = new_mods
 
       when :MODRDN
-
-	# Nothing to do.
+        # Nothing to do.
 
       end
 
@@ -439,53 +434,53 @@ module LDAP
     def LDIF.parse_file( file, sort=false ) # :yield: record
 
       File.open( file ) do |f|
-	entries = []
-	entry = false
-	header = true
-	version = false
+        entries = []
+        entry = false
+        header = true
+        version = false
 
-	while line = f.gets
+        while line = f.gets
 
-	  if line =~ /^dn:/
-	    header = false
+          if line =~ /^dn:/
+            header = false
 
-	    if entry && ! version
-	      if block_given?
-		yield parse_entry( entry )
-	      else
-	        entries << parse_entry( entry )
-	      end
-	    end
+            if entry && ! version
+              if block_given?
+                yield parse_entry( entry )
+              else
+                entries << parse_entry( entry )
+              end
+            end
 
-	    if version
-	      entry << line
-	      version = false
-	    else
-	      entry = [ line ]
-	    end
+            if version
+              entry << line
+              version = false
+            else
+              entry = [ line ]
+            end
 
-	    next
-	  end
+            next
+          end
 
-	  if header && line.downcase =~ /^version/
-	    entry = [ line ]
-	    version = true
-	    next
-	  end
-	
-	  entry << line
-	end
+          if header && line.downcase =~ /^version/
+            entry = [ line ]
+            version = true
+            next
+          end
 
-	if block_given?
-	  yield parse_entry( entry )
-	  nil
-	else
-	  entries << parse_entry( entry )
+          entry << line
+        end
 
-	  # Sort entries if sorting has been requested.
-	  entries.sort! { |x,y| x.dn.length <=> y.dn.length } if sort
-	  entries
-	end
+        if block_given?
+          yield parse_entry( entry )
+          nil
+        else
+          entries << parse_entry( entry )
+
+          # Sort entries if sorting has been requested.
+          entries.sort! { |x,y| x.dn.length <=> y.dn.length } if sort
+          entries
+        end
 
       end
 
@@ -503,10 +498,10 @@ module LDAP
         # TODO: Need to dynamically assemble this case statement to add
         # OpenLDAP's increment change type, etc.
         change_type = case mod.mod_op & ~LDAP_MOD_BVALUES
-			when LDAP_MOD_ADD     then 'add'
-			when LDAP_MOD_DELETE  then 'delete'
-			when LDAP_MOD_REPLACE then 'replace'
-		      end
+          when LDAP_MOD_ADD     then 'add'
+          when LDAP_MOD_DELETE  then 'delete'
+          when LDAP_MOD_REPLACE then 'replace'
+        end
 
         ldif << "-\n" if plural
         ldif << LDIF.to_ldif( change_type, mod.mod_type )
@@ -529,9 +524,9 @@ module LDAP
       ldif = "dn: %s\n" % get_dn
 
       get_attributes.each do |attr|
-	get_values( attr ).each do |val|
-	  ldif << LDIF.to_ldif( attr, [ val ] )
-	end
+        get_values( attr ).each do |val|
+          ldif << LDIF.to_ldif( attr, [ val ] )
+        end
       end
 
       LDIF::Entry.new( ldif )
@@ -540,7 +535,7 @@ module LDAP
     alias_method :to_s, :to_ldif
   end
 
-  
+
   class Mod
 
     # Convert an LDAP::Mod with the DN given in +dn+ to LDIF.
@@ -552,11 +547,11 @@ module LDAP
       # OpenLDAP's increment change type, etc.
       case mod_op & ~LDAP_MOD_BVALUES
       when LDAP_MOD_ADD
-	ldif << "changetype: add\n"
+        ldif << "changetype: add\n"
       when LDAP_MOD_DELETE
-	ldif << "changetype: delete\n"
+        ldif << "changetype: delete\n"
       when LDAP_MOD_REPLACE
-	return LDIF.mods_to_ldif( dn, self )
+        return LDIF.mods_to_ldif( dn, self )
       end
 
       ldif << LDIF.to_ldif( mod_type, mod_vals )

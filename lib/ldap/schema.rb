@@ -15,9 +15,9 @@ module LDAP
 
     def initialize(entry)
       if( entry )
-	entry.each{|key,vals|
-	  self[key] = vals
-	}
+        entry.each do |key, vals|
+          self[key] = vals
+        end
       end
     end
 
@@ -32,14 +32,15 @@ module LDAP
     # +at+. +at+ may be the string *MUST*, *MAY* or *SUP*.
     #
     def attr(oc,at)
-      self['objectClasses'].each{|s|
-	if( s =~ /NAME\s+'#{oc}'/ )
-	  case s
-	  when /#{at}\s+\(([\w\d_\-\s\$]+)\)/i then return $1.split("$").collect{|attr| attr.strip}
-	  when /#{at}\s+([\w\d_\-]+)/i then return $1.split("$").collect{|attr| attr.strip}
-	  end
-	end
-      }
+      self['objectClasses'].each do |s|
+        if( s =~ /NAME\s+'#{oc}'/ )
+          case s
+          when /#{at}\s+\(([\w\d_\-\s\$]+)\)/i then return $1.split("$").collect{|attr| attr.strip}
+          when /#{at}\s+([\w\d_\-]+)/i then return $1.split("$").collect{|attr| attr.strip}
+          end
+        end
+      end
+
       return nil
     end
 
@@ -62,6 +63,7 @@ module LDAP
     def sup(oc)
       attr(oc, "SUP")
     end
+
   end
 
   class Conn
@@ -76,23 +78,24 @@ module LDAP
     #
     # +sec+ and +usec+ can be used to specify a time-out for the search in
     # seconds and microseconds, respectively.
-    # 
+    #
     def schema(base = nil, attrs = nil, sec = 0, usec = 0)
       attrs ||= [
-	'objectClasses',
-	'attributeTypes',
-	'matchingRules',
-	'matchingRuleUse',
-	'dITStructureRules',
-	'dITContentRules',
-	'nameForms',
-	'ldapSyntaxes',
+        'objectClasses',
+        'attributeTypes',
+        'matchingRules',
+        'matchingRuleUse',
+        'dITStructureRules',
+        'dITContentRules',
+        'nameForms',
+        'ldapSyntaxes',
       ]
       base ||= root_dse(['subschemaSubentry'], sec, usec)[0]['subschemaSubentry'][0]
       base ||= 'cn=schema'
-      ent = search2(base, LDAP_SCOPE_BASE, '(objectClass=subschema)',
-		    attrs, false, sec, usec)
-      return Schema.new(ent[0])
+      entries = search2(base, LDAP_SCOPE_BASE, '(objectClass=subschema)',
+        attrs, false, sec, usec)
+
+      return Schema.new(entries[0])
     end
 
     # Fetch the root DSE (DSA-specific Entry) for the connection. DSA stands
@@ -110,20 +113,23 @@ module LDAP
     #
     def root_dse(attrs = nil, sec = 0, usec = 0)
       attrs ||= [
-	'subschemaSubentry',
-	'namingContexts',
-	'monitorContext',
-	'altServer',
-	'supportedControl',
-	'supportedExtension',
-	'supportedFeatures',
-	'supportedSASLMechanisms',
-	'supportedLDAPVersion',
+        'subschemaSubentry',
+        'namingContexts',
+        'monitorContext',
+        'altServer',
+        'supportedControl',
+        'supportedExtension',
+        'supportedFeatures',
+        'supportedSASLMechanisms',
+        'supportedLDAPVersion',
       ]
 
       entries = search2('', LDAP_SCOPE_BASE, '(objectClass=*)',
-			attrs, false, sec, usec)
+        attrs, false, sec, usec)
+
       return entries
     end
+
   end
+
 end
