@@ -12,6 +12,7 @@ VALUE rb_cLDAP_Entry;
 void
 rb_ldap_entry_free (RB_LDAPENTRY_DATA * edata)
 {
+  xfree(edata);
   /* edata->msg is valid in a block given by each search operation */
   /* ldap_msgfree should be called after ldap_search */
 }
@@ -22,7 +23,7 @@ rb_ldap_entry_new (LDAP * ldap, LDAPMessage * msg)
   VALUE val;
   RB_LDAPENTRY_DATA *edata;
   val = Data_Make_Struct (rb_cLDAP_Entry, RB_LDAPENTRY_DATA,
-			  0, 0 /* rb_ldap_entry_free */ , edata);
+			  0, rb_ldap_entry_free, edata);
   edata->ldap = ldap;
   edata->msg = msg;
   return val;
@@ -112,7 +113,7 @@ rb_ldap_entry_get_attributes (VALUE self)
   RB_LDAPENTRY_DATA *edata;
   VALUE vals;
   char *attr;
-  BerElement *ber;
+  BerElement *ber = NULL;
 
   GET_LDAPENTRY_DATA (self, edata);
 
@@ -122,15 +123,14 @@ rb_ldap_entry_get_attributes (VALUE self)
        attr = ldap_next_attribute (edata->ldap, edata->msg, ber))
     {
       rb_ary_push (vals, rb_tainted_str_new2 (attr));
+      ldap_memfree(attr);
     }
 
-  /* this code may cause segv
-     #if !defined(USE_OPENLDAP1)
-     if( ber != NULL ){
-     ber_free(ber, 0);
-     }
-     #endif
-   */
+    #if !defined(USE_OPENLDAP1)
+    if( ber != NULL ){
+      ber_free(ber, 0);
+    }
+    #endif
 
   return vals;
 }

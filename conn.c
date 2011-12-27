@@ -31,6 +31,7 @@ rb_ldap_conn_free (RB_LDAP_DATA * ldapdata)
     {
       ldap_unbind (ldapdata->ldap);
     };
+  xfree(ldapdata);
 };
 
 static void
@@ -1515,6 +1516,7 @@ rb_ldap_conn_modify_s (VALUE self, VALUE dn, VALUE attrs)
 
   ldapdata->err = ldap_modify_s (ldapdata->ldap, c_dn, c_attrs);
   Check_LDAP_Result (ldapdata->err);
+  free(c_attrs);
 
   return self;
 };
