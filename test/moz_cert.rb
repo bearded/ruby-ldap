@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
 require 'rubygems'
-# gem 'ruby-ldap', '~> 0.9.11.1'
+# gem 'ruby-ldap', '~> 0.9.12'
 require 'ldap'
 require 'optparse'
 require 'pp'

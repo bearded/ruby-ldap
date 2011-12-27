@@ -5,6 +5,7 @@ MANIFEST
 NOTES
 README
 TODO
+clientauth.c
 conn.c
 entry.c
 example/cgi/search.cgi
@@ -34,6 +35,7 @@ test/ext.rb
 test/misc1.rb
 test/misc2.rb
 test/modrdn.rb
+test/moz_cert.rb
 test/openldap1/slapd.conf.in
 test/openldap2/slapd-ssl.conf.in
 test/openldap2/slapd.conf.in

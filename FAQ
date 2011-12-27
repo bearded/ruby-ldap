@@ -1,6 +1,3 @@
-$Id: FAQ,v 1.6 2006/04/25 08:43:12 ianmacd Exp $
-
-
 FAQ
 ---
 
@@ -10,21 +7,19 @@ A. Create a LDAP::Mod object with the flag LDAP::LDAP_MOD_BVALUES as follows:
 
    entry = [
      LDAP::mod(LDAP::LDAP_MOD_ADD|LDAP_MOD_BVALUES, 'jpegPhoto', [jpeg_img]),
-     LDAP::mod(LDAP::LDAP_MOD_ADD, 'cn', ['Takaaki Tateishi']),
-     ...
+     LDAP::mod(LDAP::LDAP_MOD_ADD, 'cn', ['Takaaki Tateishi']) #, ...
    ]
    conn.add("dc=localhost, dc=localdomain", entry)
 
 
 
-Q. Is there shortcut method for adding/modifying entries.
+Q. Is there shortcut method for adding/modifying entries?
 
 A. Yes, there is. You can directly give LDAP::Conn#add/modify hash data as
    follows:
 
    entry = {
-     'objectclass' => [ 'top', 'person' ],
-     ...
+     'objectclass' => [ 'top', 'person' ] #, ...
    }
    conn.add( "cn=foobar, dc=localhost, dc=localdomain", entry )
 
@@ -49,7 +44,7 @@ A. Yes, as of version 0.9.4, you can. Set the size limit using
      conn.set_option( LDAP::LDAP_OPT_SIZELIMIT, 10 )
 
      conn.search2( 'dc=localhost,dc=localdomain',
-         	  LDAP::LDAP_SCOPE_SUBTREE, '(objectClass=*)' )
+                    LDAP::LDAP_SCOPE_SUBTREE, '(objectClass=*)' )
 
      if conn.err == LDAP::LDAP_SIZELIMIT_EXCEEDED
        # Results set was truncated by server.
@@ -60,3 +55,4 @@ A. Yes, as of version 0.9.4, you can. Set the size limit using
    will likely have its own maximum configured, so it can be important to
    check for this condition on all of your calls to LDAP::Conn#search and
    LDAP::Conn#search2.
+
