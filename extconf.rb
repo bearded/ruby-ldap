@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby-1.4
+#!/usr/bin/env ruby
 #
 # extconf.rb for ldap extension
 # $Id: extconf.rb,v 1.7 2006/04/18 23:49:56 ianmacd Exp $
@@ -10,13 +10,14 @@ $INTERACTIVE = false
 
 if( ARGV.include?("--help") )
   print <<EOF
-  --with-ldap-dir    specify the LDAP directory.
+  --with-ldap-dir     specify the LDAP directory.
   --with-ldap-include specify the directory containing ldap.h and lber.h.
-  --with-ldap-lib    specify the directory containing the LDAP libraries.
-  --with-netscape    build with Netscape SDK.
-  --with-openldap1   build with OpenLDAP 1.x.
-  --with-openldap2   build with OpenLDAP 2.x.
-  --with-wldap32     Active Directory Client API.
+  --with-ldap-lib     specify the directory containing the LDAP libraries.
+  --with-netscape     build with Netscape SDK.
+  --with-mozilla      build with Mozilla SDK (Enables certificate authentication).
+  --with-openldap1    build with OpenLDAP 1.x.
+  --with-openldap2    build with OpenLDAP 2.x.
+  --with-wldap32      Active Directory Client API.
 
 The following are library configuration options:
   --with-libcrypto=crypto,   --without-libcrypto
@@ -40,7 +41,9 @@ def find_files(dir = nil)
     search_dirs =
       ["/usr/local", "/usr", "/opt"] +
       Dir.glob("/usr/local/./*ldap*").collect{|d| d.gsub(/\/\.\//, "/")} +
-      Dir.glob("/usr/./*ldap*").collect{|d| d.gsub(/\/\.\//, "/")}
+      Dir.glob("/usr/./*ldap*").collect{|d| d.gsub(/\/\.\//, "/") +
+        Dir.glob("/usr/lib{64,}/mozldap/*ldap*") + ["/usr/include/mozldap"]
+    }
   end
   for d in search_dirs
     h = File.join(d,"include","ldap.h")
@@ -48,21 +51,21 @@ def find_files(dir = nil)
     if( File.exist?(h) )
       l = Dir.glob(l)[0]
       if( l )
-	if( $INTERACTIVE )
-	  print("--with-ldap-dir=#{d} [y/n]")
-	  ans = $stdin.gets
-	  ans.chop!
-	  if( ans == "y" )
-	    result = [d, File.basename(l).split(".")[0][3..-1], File.basename(h)]
-	    return result
-	    break
-	  end
-	else
-	  print("--with-ldap-dir=#{d}\n")
-	  result = [d, File.basename(l).split(".")[0][3..-1], File.basename(h)]
-	  return result
-	  break
-	end
+        if( $INTERACTIVE )
+          print("--with-ldap-dir=#{d} [y/n]")
+          ans = $stdin.gets
+          ans.chop!
+          if( ans == "y" )
+            result = [d, File.basename(l).split(".")[0][3..-1], File.basename(h)]
+            return result
+            break
+          end
+        else
+          print("--with-ldap-dir=#{d}\n")
+          result = [d, File.basename(l).split(".")[0][3..-1], File.basename(h)]
+          return result
+          break
+        end
       end
     end
   end
@@ -83,6 +86,9 @@ def ldap_with_config(arg, default = nil)
 end
 
 $use_netscape  = ldap_with_config("netscape")
+if ldap_with_config("mozilla")
+  $use_netscape  = '6'
+end
 $use_openldap1 = ldap_with_config("openldap1")
 $use_openldap2 = ldap_with_config("openldap2")
 $use_wldap32   = ldap_with_config("wldap32")
@@ -100,6 +106,9 @@ if( !($use_netscape || $use_openldap1 || $use_openldap2 || $use_wldap32) )
   when /^ssldap50+$/, /^ldap50+$/
     print("--with-netscape=5")
     $use_netscape = "5"
+  when /^ssldap60+$/, /^ldap60+$/
+    print("--with-netscape=6")
+    $use_netscape = "6"
   else
     if RUBY_PLATFORM =~ /-(:?mingw32|mswin32)/
       print("--with-wldap32\n")
@@ -131,6 +140,27 @@ if( $use_netscape )
     $libldap    = ldap_with_config("libldap", $libldap)
     $libns      = ldap_with_config("libns", "nspr4,plc4,plds4").split(",")
     $liblber    = ldap_with_config("liblber", "lber50")
+    $libssl     = ldap_with_config("libssl", "ssl3")
+  when /^6/
+    %x{pkg-config --exists 'mozldap >= 6.0 nspr >= 4.0'}
+
+    if $? == 0
+      puts 'Mozzilla LDAP libs will be used.'
+      $mozlibs = %x{pkg-config mozldap nspr --libs}.chomp
+      $mozincs = %x{pkg-config mozldap nspr --cflags}.chomp
+    else
+      puts 'pkg-config reported that no right mozilla LDAP libs were found'
+      puts 'we need mozldap >= 6.0 and nspr >= 4.0'
+      exit 1
+    end
+
+    $defs << "-DUSE_NETSCAPE_SDK -DUSE_SSL_CLIENTAUTH"
+    #$libnsl     = ldap_with_config("libnsl", "nsl")
+    #$libpthread = ldap_with_config("libpthread", "pthread")
+    $libresolv  = ldap_with_config("libresolv", "resolv")
+    $libldap    = ldap_with_config("libldap", "ldap60")
+    $libns      = ldap_with_config("libns", "nspr4,plc4,plds4").split(",")
+    $liblber    = ldap_with_config("liblber", "lber60")
     $libssl     = ldap_with_config("libssl", "ssl3")
   end
 end
@@ -178,6 +208,10 @@ if( $use_wldap32 )
   have_header("winldap.h")
   have_header("winlber.h")
   have_header("sys/time.h")
+elsif $use_netscape =~ /^6/
+  # mozilla
+  pkg_config('mozldap')
+  pkg_config('nspr')
 else
   ldap_h = have_header("ldap.h")
   lber_h = have_header("lber.h")
@@ -192,6 +226,7 @@ else
   have_header("openssl/crypto.h") || have_header("crypto.h")
 end
 
+$LIBS << ' -pthread'
 for l in [$libcrypto, $libssl, $libnsl, $libpthread, $libresolv,
           $libns, $liblber, $libldap_r, $libldap].flatten
   if( l )
@@ -199,7 +234,7 @@ for l in [$libcrypto, $libssl, $libnsl, $libpthread, $libresolv,
   end
 end
 
-have_func("ldap_init")
+have_func("ldap_init", 'ldap.h')
 have_func("ldap_set_option")
 have_func("ldap_get_option")
 have_func("ldap_start_tls_s") if $use_openldap2
@@ -247,7 +282,7 @@ end
 $run_test += " #{$slapd} #{$schema_dir}"
 
 
-File.open("Makefile","a"){|f|
+File.open("Makefile","a") do |f|
   f.print <<EOF
 
 test::
@@ -268,6 +303,7 @@ doc:
 unit:
 \t(cd test; $(RUBY_INSTALL_NAME) tc_ldif.rb)
 
-.PHONY:	doc
+.PHONY: doc
 EOF
-}
+
+end
