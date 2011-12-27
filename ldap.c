@@ -88,6 +88,65 @@ rb_ldap_dn2ufn (VALUE self, VALUE dn)
     }
 }
 
+VALUE
+rb_ldap_explode_dn (VALUE self, VALUE dn, VALUE notypes)
+{
+    char **c_arr, **p;
+    char *c_dn;
+    VALUE ary;
+
+    if (dn == Qnil) 
+    {
+        return Qnil;
+    }
+
+    c_dn = StringValueCStr (dn);
+    if ((c_arr = ldap_explode_dn (c_dn, RTEST (notypes) ? 1 : 0)))
+    {
+        ary = rb_ary_new ();
+        for (p = c_arr; *p != NULL; p++)
+        {
+            rb_ary_push (ary, rb_tainted_str_new2 (*p));
+        }
+        ldap_value_free (c_arr);
+
+        return ary;
+    } 
+    else 
+    {
+        return Qnil;
+    }
+}
+
+VALUE
+rb_ldap_explode_rdn (VALUE self, VALUE rdn, VALUE notypes)
+{
+    char **c_arr, **p;
+    char *c_dn;
+    VALUE ary;
+
+    if (rdn == Qnil) 
+    {
+        return Qnil;
+    }
+
+    c_dn = StringValueCStr (rdn);
+    if ((c_arr = ldap_explode_rdn (c_dn, RTEST (notypes) ? 1 : 0))) 
+    {
+        ary = rb_ary_new ();
+        for (p = c_arr; *p != NULL; p++) {
+            rb_ary_push (ary, rb_tainted_str_new2 (*p));
+        }
+        ldap_value_free (c_arr);
+
+        return ary;
+    } 
+    else 
+    {
+        return Qnil;
+    }
+}
+
 /*
  * call-seq:
  * LDAP.mod(mod_type, attr, vals)  => LDAP::Mod
@@ -246,6 +305,8 @@ Init_ldap ()
 
 
   rb_define_module_function (rb_mLDAP, "err2string", rb_ldap_err2string, 1);
+  rb_define_module_function (rb_mLDAP, "explode_dn", rb_ldap_explode_dn, 2);
+  rb_define_module_function (rb_mLDAP, "explode_rdn", rb_ldap_explode_rdn, 2);
   rb_define_module_function (rb_mLDAP, "dn2ufn", rb_ldap_dn2ufn, 1);
   rb_define_module_function (rb_mLDAP, "mod", rb_ldap_mod_s_new, -1);
   rb_define_module_function (rb_mLDAP, "hash2mods", rb_ldap_hash2mods, 2);
