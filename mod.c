@@ -38,6 +38,7 @@ rb_ldap_mod_free (RB_LDAPMOD_DATA * data)
 	}
       xfree (data->mod);
     }
+    xfree (data);
 }
 
 static LDAPMod *
