@@ -7,13 +7,13 @@ Copyright (C) 2009 Alexey Chebotar <alexey.chebotar@gmail.com>
 
 DESCRIPTION
 
-'Ruby/LDAP' is a Ruby extension library that provides an interface to the LDAP
+Ruby/LDAP is a Ruby extension library that provides an interface to the LDAP
 API as described in RFC1823.
 -------------------------------------------------------------------------------
 
 REQUIREMENT
 
-  * Ruby 1.8.x / 1.9.x (at least 1.8.2 if you want to use ldap/control)
+  * Ruby 1.8.x or 1.9.x
   * OpenLDAP, Netscape SDK, Windows 2003 or Windows XP
 
 -------------------------------------------------------------------------------
@@ -258,9 +258,11 @@ This list maybe not correct. If you notice mistakes of this list, please point o
 * Jan Mikkelsen
 * Adam Doligalski
 * Chris Scharf
-* bidon: Patch.
-* Milos Jakubicek: Patch.
-* S. Potter [mbbx6spp]: Gem Packaging Support
+* bidon
+* Milos Jakubicek
+* S. Potter (mbbx6spp)
 * Kouhei Sutou
-* Michael Granger: Patch.
-* Anthony M. Martinez: Patch.
+* Michael Granger
+* Anthony M. Martinez
+* Hiroki Najima (nazy)
+* Marek Veber (marek-veber)

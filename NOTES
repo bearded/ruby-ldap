@@ -1,3 +1,27 @@
+0.9.12
+-----
+
+* On windows, the default ldap library became wldap32;
+* Fixed compile with ruby 1.9.2.
+
+Thank to Hiroki Najima!
+
+* Fixed many memory leaks;
+* Added functions:
+    LDAP::Conn.open_uri(uri);
+    LDAP::explode_dn(dn, notypes);
+    LDAP::explode_rdn(rdn, notypes).
+
+Thanks to Marek Veber!
+
+* Fixed bug in ldap/ldif.rb (GH-6).
+
+Thanks to bbense.
+
+* Enable client certificate authentication for mozilla ldap 6.0 only.
+
+Thanks to Yuri Arabadji!
+
 0.9.11
 -----
 
