@@ -1,4 +1,4 @@
-# $Id: tc_conn.rb,v 1.3 2005/03/15 01:43:59 ianmacd Exp $
+# $Id$
 #
 # A suite of unit tests for testing Ruby/LDAP connection functionality.
 

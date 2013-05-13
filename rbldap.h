@@ -1,6 +1,6 @@
 /*
  * rbldap.h
- * $Id: rbldap.h,v 1.17 2006/08/09 11:23:04 ianmacd Exp $
+ * $Id$
  */
 
 #ifndef RB_LDAP_H

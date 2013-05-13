@@ -1,7 +1,7 @@
 # Manipulation of LDAP schema data.
 #
 #--
-# $Id: schema.rb,v 1.9 2006/02/08 23:15:17 ianmacd Exp $
+# $Id$
 #++
 
 # The LDAP module encapsulates the various LDAP-related classes in their own

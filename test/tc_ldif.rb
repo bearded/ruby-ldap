@@ -1,4 +1,4 @@
-# $Id: tc_ldif.rb,v 1.5 2005/02/26 01:42:27 ianmacd Exp $
+# $Id$
 #
 # A suite of unit tests for testing Ruby/LDAP LDIF functionality. 
 

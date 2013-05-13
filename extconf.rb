@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #
 # extconf.rb for ldap extension
-# $Id: extconf.rb,v 1.7 2006/04/18 23:49:56 ianmacd Exp $
+# $Id$
 #
 
 require 'mkmf'

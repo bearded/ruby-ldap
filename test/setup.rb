@@ -1,4 +1,4 @@
-# $Id: setup.rb,v 1.3 2005/03/13 10:10:56 ianmacd Exp $
+# $Id$
 #
 # Basic set-up for performing LDAP unit tests.
 

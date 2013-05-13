@@ -1,5 +1,5 @@
 /* -*- C -*-
- * $Id: misc.c,v 1.11 2006/07/03 22:54:52 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"

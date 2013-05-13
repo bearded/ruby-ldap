@@ -1,5 +1,5 @@
 /*
- * $Id: winldap.h,v 1.6 2006/08/08 14:36:15 ianmacd Exp $
+ * $Id$
  *
  * Copyright (C) 2001 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
  * Copyright (C) 2006 Ian Macdonald <ian@caliban.org>

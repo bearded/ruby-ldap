@@ -1,6 +1,6 @@
 /*
  * sslconn.c
- * $Id: sslconn.c,v 1.18 2006/04/19 22:13:26 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"

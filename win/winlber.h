@@ -1,5 +1,5 @@
 /* -*- C -*-
- * $Id: winlber.h,v 1.1.1.1 2002/11/06 07:56:34 ttate Exp $
+ * $Id$
  * Copyright (C) 2001 Takaaki Tateishi <ttate@kt.jaist.ac.jp>
  * References: MSDN Library, OpenLDAP, Cygwin
  */

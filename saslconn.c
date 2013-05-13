@@ -1,6 +1,6 @@
 /*
  * saslconn.c
- * $Id: saslconn.c,v 1.25 2006/02/13 17:20:32 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"

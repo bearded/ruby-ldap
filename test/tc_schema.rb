@@ -1,4 +1,4 @@
-# $Id: tc_schema.rb,v 1.4 2005/03/13 10:11:41 ianmacd Exp $
+# $Id$
 #
 # A suite of unit tests for testing Ruby/LDAP schema functionality.
 

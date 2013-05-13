@@ -1,6 +1,6 @@
 /*
  * conn.c
- * $Id: conn.c,v 1.51 2006/08/01 00:07:53 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"

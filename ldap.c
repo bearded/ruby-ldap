@@ -1,7 +1,7 @@
 /* -*- C -*-
  *
  * ldap.c
- * $Id: ldap.c,v 1.14 2005/03/15 10:07:48 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"
