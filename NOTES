@@ -1,3 +1,10 @@
+0.9.13
+-----
+
+* Prevent SyntaxError raised under Ruby 2.0.0 by line 107 regex
+  (invalid multibyte escape)
+
+
 0.9.12
 -----
 
