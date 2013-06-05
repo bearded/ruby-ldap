@@ -1,3 +1,4 @@
+# encoding: US-ASCII
 # Manipulation of LDIF data.
 #
 #--
