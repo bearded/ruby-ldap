@@ -2,7 +2,7 @@
 # Manipulation of LDIF data.
 #
 #--
-# $Id: ldif.rb,v 1.11 2005/03/03 01:32:07 ianmacd Exp $
+# $Id$
 #++
 #
 # Copyright (C) 2005 Ian Macdonald <ian@caliban.org>
@@ -105,7 +105,7 @@ module LDAP
     #
     def LDIF.unsafe_char?( str )
       # This could be written as a single regex, but this is faster.
-      str =~ /^[ :]/ || str =~ /[\x00-\x1f\x7f-\xff]/
+      str =~ /^[ :]/ || str =~ /[\u0080-\u00ff]/
     end
 
 

@@ -1,6 +1,6 @@
 /*
  * entry.c
- * $Id: entry.c,v 1.13 2005/03/15 10:15:32 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"

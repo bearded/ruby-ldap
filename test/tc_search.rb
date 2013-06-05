@@ -1,4 +1,4 @@
-# $Id: tc_search.rb,v 1.4 2006/02/12 19:55:59 ianmacd Exp $
+# $Id$
 #
 # A suite of unit tests for testing Ruby/LDAP search functionality.
 

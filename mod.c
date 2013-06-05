@@ -1,6 +1,6 @@
 /*
  * mod.c
- * $Id: mod.c,v 1.14 2005/03/07 22:57:34 ianmacd Exp $
+ * $Id$
  */
 
 #include "ruby.h"

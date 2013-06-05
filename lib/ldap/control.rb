@@ -1,7 +1,7 @@
 # Manipulation of LDAP control data.
 #
 #--
-# $Id: control.rb,v 1.2 2005/02/28 05:02:25 ianmacd Exp $
+# $Id$
 #++
 #
 # Copyright (C) 2004 Ian Macdonald <ian@caliban.org>
