@@ -150,14 +150,19 @@ rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
     case 6:
       /* nothing. this requires credentials to be parsed first. we'll get defaults after arg-scanning */
     case 5:
-      clientctrls = rb_ldap_get_controls (arg5);
+      if(!NIL_P(arg5))
+        clientctrls = rb_ldap_get_controls (arg5);
       /* down seems more likely */
     case 4:
-      serverctrls = rb_ldap_get_controls (arg4);
+      if(!NIL_P(arg4))
+        serverctrls = rb_ldap_get_controls (arg4);
       /* down seems more likely */
     case 3:
-      cred->bv_val = StringValueCStr (arg3);
-      cred->bv_len = RSTRING_LEN (arg3);
+      if(!NIL_P(arg3))
+        {
+          cred->bv_val = StringValueCStr (arg3);
+          cred->bv_len = RSTRING_LEN (arg3);
+        }
       /* down seems more likely */
     case 2:			/* don't need the cred for GSSAPI */
       dn = StringValuePtr (arg1);
