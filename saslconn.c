@@ -106,7 +106,7 @@ rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
 {
   RB_LDAP_DATA *ldapdata;
 
-  VALUE arg1, arg2, arg3, arg4, arg5, sasl_options = Qnil;
+  VALUE arg1, arg2, arg3, arg4, arg5, sasl_options, other_options = Qnil;
   int version;
   char *dn = NULL;
   char *mechanism = NULL;
@@ -145,8 +145,16 @@ rb_ldap_conn_sasl_bind (int argc, VALUE argv[], VALUE self)
       rb_raise (rb_eLDAP_Error, "already bound.");
     };
 
-  switch (rb_scan_args (argc, argv, "24", &arg1, &arg2, &arg3, &arg4, &arg5, &sasl_options))
+  switch (rb_scan_args (argc, argv, "25", &arg1, &arg2, &arg3, &arg4, &arg5, &sasl_options, &other_options))
     {
+    case 7:
+      /* Parse through the hash.  Currently there's only one option, nothing fancy needed. */
+      if (!NIL_P(rb_ldap_indifferent_hash_aref(other_options, "nocanon")))
+        {
+          /* Inspired by the ldapsearch -N option, inspired by the code in OpenLDAP (BSD style license) in clients/tools/common.c */
+          ldapdata->err = ldap_set_option( ldapdata->ldap, LDAP_OPT_X_SASL_NOCANON, LDAP_OPT_ON);
+          Check_LDAP_Result(ldapdata->err); 
+        }
     case 6:
       /* nothing. this requires credentials to be parsed first. we'll get defaults after arg-scanning */
     case 5:
