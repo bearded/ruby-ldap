@@ -1626,6 +1626,42 @@ rb_ldap_conn_modrdn_s (VALUE self, VALUE dn, VALUE newrdn, VALUE delete_p)
   return self;
 };
 
+#if defined(HAVE_LDAPCONTROL) && defined(HAVE_LDAP_ADD_EXT_S)
+/*
+ * call-seq:
+ * conn.rename(dn, new_rdn, new_parent_dn, delete_old_rdn, sctrls, cctrls)  => self
+ *
+ * Modify the RDN of the entry with DN, +dn+, giving it the new RDN in parent +new_parent_dn+,
+ * +new_rdn+. If +delete_old_rdn+ is *true*, the old RDN value will be deleted
+ * from the entry.
+ */
+VALUE
+rb_ldap_conn_rename_s (VALUE self, VALUE dn, VALUE newrdn, VALUE newparentdn, VALUE delete_p,
+			VALUE serverctrls, VALUE clientctrls)
+{
+  RB_LDAP_DATA *ldapdata;
+  char *c_dn;
+  char *c_newrdn;
+  char *c_newparentdn;
+  int c_delete_p;
+  LDAPControl **sctrls, **cctrls;
+
+  GET_LDAP_DATA (self, ldapdata);
+  c_dn = StringValueCStr (dn);
+  c_newrdn = StringValueCStr (newrdn);
+  c_newparentdn = StringValueCStr (newparentdn);
+  c_delete_p = (delete_p == Qtrue) ? 1 : 0;
+  sctrls = rb_ldap_get_controls (serverctrls);
+  cctrls = rb_ldap_get_controls (clientctrls);
+
+  ldapdata->err =
+    ldap_rename_s (ldapdata->ldap, c_dn, c_newrdn, c_newparentdn, c_delete_p, sctrls, cctrls);
+  Check_LDAP_Result (ldapdata->err);
+
+  return self;
+}
+#endif
+
 /*
  * call-seq:
  * conn.delete(dn)  => self
@@ -1817,6 +1853,9 @@ Init_ldap_conn ()
   rb_ldap_conn_define_method ("add", rb_ldap_conn_add_s, 2);
   rb_ldap_conn_define_method ("modify", rb_ldap_conn_modify_s, 2);
   rb_ldap_conn_define_method ("modrdn", rb_ldap_conn_modrdn_s, 3);
+#if defined(HAVE_LDAPCONTROL) && defined(HAVE_LDAP_ADD_EXT_S)
+  rb_ldap_conn_define_method ("rename", rb_ldap_conn_rename_s, 6);
+#endif
   rb_ldap_conn_define_method ("delete", rb_ldap_conn_delete_s, 1);
 #if defined(HAVE_LDAP_COMPARE_S)
   rb_ldap_conn_define_method ("compare", rb_ldap_conn_compare_s, 3);
