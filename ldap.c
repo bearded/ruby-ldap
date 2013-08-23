@@ -407,6 +407,9 @@ Init_ldap ()
 #ifdef LDAP_OPT_TIMELIMIT
   rb_ldap_define_opt (LDAP_OPT_TIMELIMIT);
 #endif
+#ifdef LDAP_OPT_NETWORK_TIMEOUT
+  rb_ldap_define_opt (LDAP_OPT_NETWORK_TIMEOUT);
+#endif
 #ifdef LDAP_OPT_THREAD_FN_PTRS
   rb_ldap_define_opt (LDAP_OPT_THREAD_FN_PTRS);
 #endif

@@ -62,6 +62,7 @@ typedef struct rb_ldapmod_data
   LDAPMod *mod;
 } RB_LDAPMOD_DATA;
 
+struct timeval rb_time_interval(VALUE num);
 
 #ifndef HAVE_LDAP_MEMFREE
 # define ldap_memfree(ptr) free(ptr)
