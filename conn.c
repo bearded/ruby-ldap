@@ -471,6 +471,15 @@ rb_ldap_conn_set_option (VALUE self, VALUE opt, VALUE data)
 
   switch (copt)
     {
+#if defined(USE_OPENLDAP1) || defined(USE_OPENLDAP2)
+    case LDAP_OPT_NETWORK_TIMEOUT:
+      {
+        struct timeval tv;
+        tv = rb_time_interval(data);
+        optdata = &tv;
+      }
+      break;
+#endif
     case LDAP_OPT_REFERRALS:
       optdata = (void *) NUM2INT (data);
       break;
@@ -595,6 +604,20 @@ rb_ldap_conn_get_option (VALUE self, VALUE opt)
       ldapdata->err = ldap_get_option (NULL, copt, (void *) info);
       data = (long *) info;
     }
+#if defined(USE_OPENLDAP1) || defined(USE_OPENLDAP2)
+  else if (copt == LDAP_OPT_NETWORK_TIMEOUT)
+    {
+      struct timeval tv;
+      ldapdata->err = ldap_get_option (ldapdata->ldap, copt, &tv);
+      if (!tv.tv_sec)
+        {
+          long x = -1;
+          data = &x;
+        }
+      else
+        data = (void *) tv.tv_sec;
+    }
+#endif
   else
     {
       data = (void *) ALLOCA_N (char, LDAP_GET_OPT_MAX_BUFFER_SIZE);
@@ -616,6 +639,9 @@ rb_ldap_conn_get_option (VALUE self, VALUE opt)
 	case LDAP_OPT_RESTART:
 	case LDAP_OPT_PROTOCOL_VERSION:
 	case LDAP_OPT_ERROR_NUMBER:
+#if defined(USE_OPENLDAP1) || defined(USE_OPENLDAP2)
+	case LDAP_OPT_NETWORK_TIMEOUT:
+#endif
 #ifdef USE_OPENLDAP2
 #ifdef LDAP_OPT_X_TLS
 	case LDAP_OPT_X_TLS:
