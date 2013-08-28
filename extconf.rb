@@ -245,6 +245,7 @@ have_func("ldap_sort_entries")
 have_func("ldapssl_init")  # NS SDK
 have_func("ldap_sslinit")  # WLDAP32
 have_func("ldap_sasl_bind_s")
+have_func("ldap_rename_s")
 have_func("ldap_compare_s")
 have_func("ldap_add_ext_s")
 have_func("ldap_compare_ext_s")
