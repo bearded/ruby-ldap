@@ -700,7 +700,7 @@ rb_ldap_conn_get_option (VALUE self, VALUE opt)
     }
   else
     {
-      rb_raise (rb_eLDAP_Error, ldap_err2string (ldapdata->err));
+      rb_raise (rb_eLDAP_Error, "%s", ldap_err2string (ldapdata->err));
     };
 #else
   rb_notimplement ();
