@@ -1652,7 +1652,7 @@ rb_ldap_conn_modrdn_s (VALUE self, VALUE dn, VALUE newrdn, VALUE delete_p)
   return self;
 };
 
-#if defined(HAVE_LDAPCONTROL) && defined(HAVE_LDAP_ADD_EXT_S)
+#if defined(HAVE_LDAPCONTROL) && defined(HAVE_LDAP_RENAME_S)
 /*
  * call-seq:
  * conn.rename(dn, new_rdn, new_parent_dn, delete_old_rdn, sctrls, cctrls)  => self
@@ -1879,7 +1879,7 @@ Init_ldap_conn ()
   rb_ldap_conn_define_method ("add", rb_ldap_conn_add_s, 2);
   rb_ldap_conn_define_method ("modify", rb_ldap_conn_modify_s, 2);
   rb_ldap_conn_define_method ("modrdn", rb_ldap_conn_modrdn_s, 3);
-#if defined(HAVE_LDAPCONTROL) && defined(HAVE_LDAP_ADD_EXT_S)
+#if defined(HAVE_LDAPCONTROL) && defined(HAVE_LDAP_RENAME_S)
   rb_ldap_conn_define_method ("rename", rb_ldap_conn_rename_s, 6);
 #endif
   rb_ldap_conn_define_method ("delete", rb_ldap_conn_delete_s, 1);
