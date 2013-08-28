@@ -1,3 +1,16 @@
+Wed Aug 28 13:21:53 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.14
+  * Fixed option parsing bug for LDAP::Conn.sasl_bind. Thanks to Brian Leake.
+  * Added possibility to use :nocanon option in rb_ldap_conn_sasl_bind.
+    See ldap_set_option(3) for more information. Thanks to Brian Leake.
+  * Added function conn.rename(dn, new_rdn, new_parent_dn, delete_old_rdn, sctrls, cctrls)  => self
+    Modify the RDN of the entry with DN, dn, giving it the new RDN in parent new_parent_dn,
+    new_rdn. If delete_old_rdn is true, the old RDN value will be deleted from the entry.
+    Thanks to Marek Veber.
+  * Added option LDAP_OPT_NETWORK_TIMEOUT for openLDAP. Thanks to David Campbell.
+  * Fixed build error with GCC 4.8.1. Thanks to Kouhei Sutou.
+  * Add missing ldap_raname_s() function availability check. Thanks to Kouhei Sutou.
+
 Wed Jun  5 17:44:47 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.13
   * Prevent SyntaxError raised under Ruby 2.0.0 by line 107 regex

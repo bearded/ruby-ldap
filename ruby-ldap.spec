@@ -5,7 +5,7 @@
 %define rdoc %( type rdoc > /dev/null && echo 1 || echo 0 )
 Summary: LDAP API (RFC1823) library module for Ruby.
 Name: ruby-ldap
-Version: 0.9.13
+Version: 0.9.14
 Release: 1
 License: Redistributable
 Group: Applications/Ruby
@@ -54,6 +54,57 @@ find $RPM_BUILD_ROOT -type f -print | \
 %doc example/ test/
 
 %changelog
+* Wed Aug 28 13:21:53 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.14-1
+- 0.9.14
+- Fixed option parsing bug for LDAP::Conn.sasl_bind. Thanks to Brian Leake.
+- Added possibility to use :nocanon option in rb_ldap_conn_sasl_bind.
+  See ldap_set_option(3) for more information. Thanks to Brian Leake.
+- Added function conn.rename(dn, new_rdn, new_parent_dn, delete_old_rdn, sctrls, cctrls)  => self
+  Modify the RDN of the entry with DN, dn, giving it the new RDN in parent new_parent_dn,
+  new_rdn. If delete_old_rdn is true, the old RDN value will be deleted from the entry.
+  Thanks to Marek Veber.
+- Added option LDAP_OPT_NETWORK_TIMEOUT for openLDAP. Thanks to David Campbell.
+- Fixed build error with GCC 4.8.1. Thanks to Kouhei Sutou.
+- Add missing ldap_raname_s() function availability check. Thanks to Kouhei Sutou.
+
+* Wed Jun  5 17:44:47 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.13-1
+- 0.9.13
+- Prevent SyntaxError raised under Ruby 2.0.0 by line 107 regex
+  (invalid multibyte escape). Thanks to Andrew Broman.
+
+* Tue Dec 27 15:17:03 UTC 2011 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.12-1
+- 0.9.12
+- Enable client certificate authentication for mozilla ldap 6.0 only. Thank to Yuri Arabadji.
+- New patch for LDAP::Mod data corruption. Thanks to Aprotim Sanyal.
+- Modify mod_type dangling pointer corruption. Thank you, anon!
+- Fixed bug in ldap/ldif.rb (GH-6). Thanks to bbense.
+- Added functions: LDAP::Conn.open_uri(uri), LDAP::explode_dn(dn, notypes), LDAP::explode_rdn(rdn, notypes)
+  Thanks to Marek Veber and Antonio Terceiro.
+- Fixed many memory leaks. Thanks to Marek Veber and Antonio Terceiro.
+- Fixed compile with ruby 1.9.2. Thanks to Hiroki Najima.
+- On windows, the default ldap library became wldap32. Thanks to Hiroki Najima.
+
+* Mon Mar 15 19:15:49 UTC 2010 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.11-1
+- 0.9.11
+- Allow passing SASL interaction options. Thanks to Anthony M. Martinez.
+
+* Fri Jan 29 07:50:30 UTC 2010 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.10-1
+- 0.9.10
+- Added controls and referral extraction to #search_ext and 
+  #search_ext2. Thanks to Michael Granger.
+
+* Thu Jun 11 06:51:30 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.9-1
+_ 0.9.9
+- Fixed LDAP::VERSION. Thanks to Kouhei Sutou
+- Gem Packaging Support. Thanks to S. Potter [mbbx6spp]
+- LDAP_OPT_X_TLS_PROTOCOL changed to LDAP_OPT_X_TLS_PROTOCOL_MIN
+  (more information in ITS#5655). Thanks to Milos Jakubicek.
+- Fixed regular expression in LDAP::Schema.attr()
+	
+* Thu Mar 25 08:45:02 UTC 2009 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.8-1
+- 0.9.8
+- Supported Ruby 1.9.x.
+
 * Wed Aug  9 2006 Ian Macdonald <ian@caliban.org> 0.9.7-1
 - 0.9.7
 - Replacement and deletion operations did not work on Win32 systems.
