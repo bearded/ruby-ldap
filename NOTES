@@ -1,3 +1,9 @@
+0.9.15
+-----
+
+* Accept nil for new_parent_dn for rename. Thanks to Kouhei Sutou.
+
+
 0.9.14
 -----
 

@@ -1,3 +1,7 @@
+Thu Aug 29 10:18:48 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.15
+  * Accept nil for new_parent_dn for rename. Thanks to Kouhei Sutou.
+
 Wed Aug 28 13:21:53 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.14
   * Fixed option parsing bug for LDAP::Conn.sasl_bind. Thanks to Brian Leake.

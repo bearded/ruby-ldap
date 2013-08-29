@@ -5,7 +5,7 @@
 %define rdoc %( type rdoc > /dev/null && echo 1 || echo 0 )
 Summary: LDAP API (RFC1823) library module for Ruby.
 Name: ruby-ldap
-Version: 0.9.14
+Version: 0.9.15
 Release: 1
 License: Redistributable
 Group: Applications/Ruby
@@ -54,6 +54,10 @@ find $RPM_BUILD_ROOT -type f -print | \
 %doc example/ test/
 
 %changelog
+* Thu Aug 29 10:18:48 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.15-1
+- 0.9.15
+- Accept nil for new_parent_dn for rename. Thanks to Kouhei Sutou.
+
 * Wed Aug 28 13:21:53 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.14-1
 - 0.9.14
 - Fixed option parsing bug for LDAP::Conn.sasl_bind. Thanks to Brian Leake.
