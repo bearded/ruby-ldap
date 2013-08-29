@@ -1657,9 +1657,10 @@ rb_ldap_conn_modrdn_s (VALUE self, VALUE dn, VALUE newrdn, VALUE delete_p)
  * call-seq:
  * conn.rename(dn, new_rdn, new_parent_dn, delete_old_rdn, sctrls, cctrls)  => self
  *
- * Modify the RDN of the entry with DN, +dn+, giving it the new RDN in parent +new_parent_dn+,
- * +new_rdn+. If +delete_old_rdn+ is *true*, the old RDN value will be deleted
- * from the entry.
+ * Modify the RDN of the entry with DN, +dn+, giving it the new RDN in
+ * parent +new_parent_dn+, +new_rdn+. If you don't want to change
+ * parent, specify *nil* to +new_parent_dn+.  If +delete_old_rdn+ is
+ * *true*, the old RDN value will be deleted from the entry.
  */
 VALUE
 rb_ldap_conn_rename_s (VALUE self, VALUE dn, VALUE newrdn, VALUE newparentdn, VALUE delete_p,
@@ -1668,14 +1669,16 @@ rb_ldap_conn_rename_s (VALUE self, VALUE dn, VALUE newrdn, VALUE newparentdn, VA
   RB_LDAP_DATA *ldapdata;
   char *c_dn;
   char *c_newrdn;
-  char *c_newparentdn;
+  char *c_newparentdn = NULL;
   int c_delete_p;
   LDAPControl **sctrls, **cctrls;
 
   GET_LDAP_DATA (self, ldapdata);
   c_dn = StringValueCStr (dn);
   c_newrdn = StringValueCStr (newrdn);
-  c_newparentdn = StringValueCStr (newparentdn);
+  if (!NIL_P(newparentdn)) {
+    c_newparentdn = StringValueCStr (newparentdn);
+  }
   c_delete_p = (delete_p == Qtrue) ? 1 : 0;
   sctrls = rb_ldap_get_controls (serverctrls);
   cctrls = rb_ldap_get_controls (clientctrls);
