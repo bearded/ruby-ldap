@@ -505,7 +505,7 @@ module LDAP
         end
 
         ldif << "-\n" if plural
-        ldif << LDIF.to_ldif( change_type, mod.mod_type )
+        ldif << LDIF.to_ldif( change_type, [mod.mod_type] )
         ldif << LDIF.to_ldif( mod.mod_type, mod.mod_vals )
 
         plural = true
