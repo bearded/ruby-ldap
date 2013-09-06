@@ -1,3 +1,8 @@
+Fri Sep  6 07:04:07 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.16
+  * Fixed undefined method 'each' in LDAP::LDIF.mods_to_ldif (GH-26).
+    Thanks to Francesco Malvezzi.
+
 Thu Aug 29 10:18:48 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.15
   * Accept nil for new_parent_dn for rename. Thanks to Kouhei Sutou.

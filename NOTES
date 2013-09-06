@@ -1,3 +1,10 @@
+0.9.16
+-----
+
+* Fixed undefined method 'each' in LDAP::LDIF.mods_to_ldif (GH-26).
+  Thanks to Francesco Malvezzi.
+
+
 0.9.15
 -----
 
