@@ -186,7 +186,6 @@ if( $use_openldap2 )
   $libnsl     = ldap_with_config("libnsl", "nsl")
   $liblber    = ldap_with_config("liblber", "lber")
   $libldap_r  = ldap_with_config("libldap_r", "ldap_r")
-  $libldap    = ldap_with_config("libldap", "ldap")
 end
 
 if( $use_wldap32 )
