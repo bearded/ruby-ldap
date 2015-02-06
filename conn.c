@@ -756,6 +756,7 @@ rb_ldap_conn_result2error (VALUE self, VALUE msg)
 
   GET_LDAP_DATA (self, ldapdata);
   Check_Kind (msg, rb_cLDAP_Entry);
+  Check_LDAPENTRY(msg);
   GET_LDAPENTRY_DATA (msg, edata);
 
   ldapdata->err = ldap_result2error (ldapdata->ldap, edata->msg, cdofree);
@@ -807,6 +808,7 @@ static VALUE
 rb_ldap_conn_invalidate_entry (VALUE msg)
 {
   RB_LDAPENTRY_DATA *edata;
+  Check_LDAPENTRY(msg);
   GET_LDAPENTRY_DATA (msg, edata);
   edata->ldap = NULL;
   edata->msg = NULL;
