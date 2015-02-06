@@ -1,3 +1,12 @@
+0.9.17
+-----
+
+* Use ruby object to keep LDAP search result instead of libldap's data structure.
+* Use macro Check_LDAPENTRY for assertion inside native extension codes.
+* Remove assertion code from macro GET_LDAPENTRY_DATA (GH-31).
+  Thanks to SUENAGA Hiroki.
+
+
 0.9.16
 -----
 

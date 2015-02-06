@@ -5,7 +5,7 @@
 %define rdoc %( type rdoc > /dev/null && echo 1 || echo 0 )
 Summary: LDAP API (RFC1823) library module for Ruby.
 Name: ruby-ldap
-Version: 0.9.16
+Version: 0.9.17
 Release: 1
 License: Redistributable
 Group: Applications/Ruby
@@ -54,6 +54,13 @@ find $RPM_BUILD_ROOT -type f -print | \
 %doc example/ test/
 
 %changelog
+* Fri Feb  6 08:51:09 UTC 2015 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.17-1
+- 0.9.17
+- Use ruby object to keep LDAP search result instead of libldap's data structure.
+- Use macro Check_LDAPENTRY for assertion inside native extension codes.
+- Remove assertion code from macro GET_LDAPENTRY_DATA.
+  Thanks to SUENAGA Hiroki.
+
 * Fri Sep  6 07:04:07 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.16-1
 - 0.9.16
 - Fixed undefined method 'each' in LDAP::LDIF.mods_to_ldif (GH-26). Thanks to Francesco Malvezzi.

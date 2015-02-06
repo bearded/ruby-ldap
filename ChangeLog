@@ -1,3 +1,10 @@
+Fri Feb  6 08:51:09 UTC 2015 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.17
+  * Use ruby object to keep LDAP search result instead of libldap's data structure.
+  * Use macro Check_LDAPENTRY for assertion inside native extension codes.
+  * Remove assertion code from macro GET_LDAPENTRY_DATA.
+    Thanks to SUENAGA Hiroki.
+
 Fri Sep  6 07:04:07 UTC 2013 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.16
   * Fixed undefined method 'each' in LDAP::LDIF.mods_to_ldif (GH-26).
