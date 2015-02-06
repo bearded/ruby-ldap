@@ -55,6 +55,8 @@ typedef struct rb_ldapentry_data
 {
   LDAP *ldap;
   LDAPMessage *msg;
+  VALUE dn;
+  VALUE attr;
 } RB_LDAPENTRY_DATA;
 
 typedef struct rb_ldapmod_data
@@ -161,7 +163,7 @@ VALUE rb_ldap_mod_vals (VALUE);
 
 #define Check_LDAPENTRY(obj) {\
   RB_LDAPENTRY_DATA *ptr; \
-  Data_Get_Struct(obj, struct rb_ldapmsg_data, ptr); \
+  Data_Get_Struct(obj, struct rb_ldapentry_data, ptr); \
   if( ! ptr->msg ){ \
     VALUE value = rb_inspect(obj); \
     rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
@@ -171,11 +173,6 @@ VALUE rb_ldap_mod_vals (VALUE);
 
 #define GET_LDAPENTRY_DATA(obj,ptr) { \
   Data_Get_Struct(obj, struct rb_ldapentry_data, ptr); \
-  if( ! ptr->msg ){ \
-    VALUE value = rb_inspect(obj); \
-    rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
-	     StringValuePtr(value)); \
-  }; \
 }
 
 #define GET_LDAPMOD_DATA(obj,ptr) {\

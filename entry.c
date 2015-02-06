@@ -8,6 +8,70 @@
 
 VALUE rb_cLDAP_Entry;
 
+static void
+rb_ldap_entry_mark(RB_LDAPENTRY_DATA *edata)
+{
+  rb_gc_mark(edata->dn);
+  rb_gc_mark(edata->attr);
+  /* 
+   * edata->ldap and edata->msg are managed in a block given by each search
+   * operation. ldap_msgfree should be called after ldap_search.
+   * they are just for C language interfaces, don't touch these members
+   * in ruby method implementation.
+   */
+}
+
+/*
+ * load libldap's value data structure into ruby array of string
+ */
+static VALUE
+rb_ldap_entry_load_val(LDAP *ldap, LDAPMessage *msg, char *c_attr)
+{
+  struct berval **bv;
+  VALUE vals;
+  int nvals;
+  int i;
+
+  bv = ldap_get_values_len(ldap, msg, c_attr);
+  if (bv == NULL)
+    return Qnil;
+
+  nvals = ldap_count_values_len(bv);
+  vals = rb_ary_new2(nvals);
+  for (i = 0; i < nvals; i++) {
+    rb_ary_push(vals, rb_tainted_str_new(bv[i]->bv_val, bv[i]->bv_len));
+  }
+  ldap_value_free_len(bv);
+
+  return vals;
+}
+
+/*
+ * load libldap's attributes data structure into ruby hash
+ */
+static VALUE
+rb_ldap_entry_load_attr(LDAP *ldap, LDAPMessage *msg)
+{
+  VALUE hash = rb_hash_new();
+  BerElement *ber = NULL;
+  char *c_attr;
+
+  for (c_attr = ldap_first_attribute(ldap, msg, &ber);
+    c_attr != NULL;
+    c_attr = ldap_next_attribute(ldap, msg, ber)) {
+    VALUE attr = rb_tainted_str_new2(c_attr);
+    VALUE vals = rb_ldap_entry_load_val(ldap, msg, c_attr);
+
+    rb_hash_aset(hash, attr, vals);
+    ldap_memfree(c_attr);
+  }
+
+#if !defined(USE_OPENLDAP1)
+  ber_free(ber, 0);
+#endif
+
+  return hash;
+}
 
 void
 rb_ldap_entry_free (RB_LDAPENTRY_DATA * edata)
@@ -22,10 +86,25 @@ rb_ldap_entry_new (LDAP * ldap, LDAPMessage * msg)
 {
   VALUE val;
   RB_LDAPENTRY_DATA *edata;
+  char *c_dn;
+
   val = Data_Make_Struct (rb_cLDAP_Entry, RB_LDAPENTRY_DATA,
-			  0, rb_ldap_entry_free, edata);
+			  rb_ldap_entry_mark, rb_ldap_entry_free, edata);
   edata->ldap = ldap;
   edata->msg = msg;
+
+  /* get dn */
+  c_dn = ldap_get_dn(ldap, msg);
+  if (c_dn) {
+    edata->dn = rb_tainted_str_new2(c_dn);
+    ldap_memfree(c_dn);
+  }
+  else {
+    edata->dn = Qnil;
+  }
+
+  /* get attributes */
+  edata->attr = rb_ldap_entry_load_attr(ldap, msg);
   return val;
 }
 
@@ -38,23 +117,10 @@ VALUE
 rb_ldap_entry_get_dn (VALUE self)
 {
   RB_LDAPENTRY_DATA *edata;
-  char *cdn;
-  VALUE dn;
 
   GET_LDAPENTRY_DATA (self, edata);
 
-  cdn = ldap_get_dn (edata->ldap, edata->msg);
-  if (cdn)
-    {
-      dn = rb_tainted_str_new2 (cdn);
-      ldap_memfree (cdn);
-    }
-  else
-    {
-      dn = Qnil;
-    }
-
-  return dn;
+  return edata->dn;
 }
 
 /*
@@ -70,34 +136,10 @@ VALUE
 rb_ldap_entry_get_values (VALUE self, VALUE attr)
 {
   RB_LDAPENTRY_DATA *edata;
-  char *c_attr;
-  struct berval **c_vals;
-  int i;
-  int count;
-  VALUE vals;
 
   GET_LDAPENTRY_DATA (self, edata);
-  c_attr = StringValueCStr (attr);
 
-  c_vals = ldap_get_values_len (edata->ldap, edata->msg, c_attr);
-  if (c_vals)
-    {
-      vals = rb_ary_new ();
-      count = ldap_count_values_len (c_vals);
-      for (i = 0; i < count; i++)
-	{
-	  VALUE str;
-	  str = rb_tainted_str_new (c_vals[i]->bv_val, c_vals[i]->bv_len);
-	  rb_ary_push (vals, str);
-	}
-      ldap_value_free_len (c_vals);
-    }
-  else
-    {
-      vals = Qnil;
-    }
-
-  return vals;
+  return rb_hash_aref(edata->attr, attr);
 }
 
 /*
@@ -111,28 +153,16 @@ VALUE
 rb_ldap_entry_get_attributes (VALUE self)
 {
   RB_LDAPENTRY_DATA *edata;
-  VALUE vals;
-  char *attr;
-  BerElement *ber = NULL;
+  VALUE attrs;
 
   GET_LDAPENTRY_DATA (self, edata);
 
-  vals = rb_ary_new ();
-  for (attr = ldap_first_attribute (edata->ldap, edata->msg, &ber);
-       attr != NULL;
-       attr = ldap_next_attribute (edata->ldap, edata->msg, ber))
-    {
-      rb_ary_push (vals, rb_tainted_str_new2 (attr));
-      ldap_memfree(attr);
-    }
+  attrs = rb_funcall(edata->attr, rb_intern("keys"), 0);
+  if (TYPE(attrs) != T_ARRAY) {
+    return Qnil;
+  }
 
-    #if !defined(USE_OPENLDAP1)
-    if( ber != NULL ){
-      ber_free(ber, 0);
-    }
-    #endif
-
-  return vals;
+  return attrs;
 }
 
 /*
@@ -144,21 +174,13 @@ rb_ldap_entry_get_attributes (VALUE self)
 VALUE
 rb_ldap_entry_to_hash (VALUE self)
 {
-  VALUE attrs = rb_ldap_entry_get_attributes (self);
-  VALUE hash = rb_hash_new ();
-  VALUE attr, vals;
-  int i;
+  RB_LDAPENTRY_DATA *edata;
+  VALUE hash, dn_ary;
 
-  Check_Type (attrs, T_ARRAY);
-  rb_hash_aset (hash, rb_tainted_str_new2 ("dn"),
-		rb_ary_new3 (1, rb_ldap_entry_get_dn (self)));
-  for (i = 0; i < RARRAY_LEN (attrs); i++)
-    {
-      attr = rb_ary_entry (attrs, i);
-      vals = rb_ldap_entry_get_values (self, attr);
-      rb_hash_aset (hash, attr, vals);
-    }
-
+  GET_LDAPENTRY_DATA (self, edata);
+  hash = rb_hash_dup(edata->attr);
+  dn_ary = rb_ary_new3(1, edata->dn);
+  rb_hash_aset(hash, rb_tainted_str_new2("dn"), dn_ary);
   return hash;
 }
 
