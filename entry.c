@@ -8,6 +8,7 @@
 
 VALUE rb_cLDAP_Entry;
 
+#if RUBY_VERSION_CODE >= 190
 static void
 rb_ldap_entry_mark(RB_LDAPENTRY_DATA *edata)
 {
@@ -72,6 +73,7 @@ rb_ldap_entry_load_attr(LDAP *ldap, LDAPMessage *msg)
 
   return hash;
 }
+#endif
 
 void
 rb_ldap_entry_free (RB_LDAPENTRY_DATA * edata)
@@ -86,13 +88,21 @@ rb_ldap_entry_new (LDAP * ldap, LDAPMessage * msg)
 {
   VALUE val;
   RB_LDAPENTRY_DATA *edata;
+#if RUBY_VERSION_CODE >= 190
   char *c_dn;
+#endif
 
+#if RUBY_VERSION_CODE >= 190
   val = Data_Make_Struct (rb_cLDAP_Entry, RB_LDAPENTRY_DATA,
 			  rb_ldap_entry_mark, rb_ldap_entry_free, edata);
+#else
+  val = Data_Make_Struct (rb_cLDAP_Entry, RB_LDAPENTRY_DATA,
+			  0, rb_ldap_entry_free, edata);
+#endif
   edata->ldap = ldap;
   edata->msg = msg;
 
+#if RUBY_VERSION_CODE >= 190
   /* get dn */
   c_dn = ldap_get_dn(ldap, msg);
   if (c_dn) {
@@ -105,6 +115,7 @@ rb_ldap_entry_new (LDAP * ldap, LDAPMessage * msg)
 
   /* get attributes */
   edata->attr = rb_ldap_entry_load_attr(ldap, msg);
+#endif
   return val;
 }
 
@@ -117,10 +128,29 @@ VALUE
 rb_ldap_entry_get_dn (VALUE self)
 {
   RB_LDAPENTRY_DATA *edata;
+#if RUBY_VERSION_CODE < 190
+  char *cdn;
+  VALUE dn;
+#endif
 
   GET_LDAPENTRY_DATA (self, edata);
 
+#if RUBY_VERSION_CODE < 190
+  cdn = ldap_get_dn (edata->ldap, edata->msg);
+  if (cdn)
+    {
+      dn = rb_tainted_str_new2 (cdn);
+      ldap_memfree (cdn);
+    }
+  else
+    {
+      dn = Qnil;
+    }
+
+  return dn;
+#else
   return edata->dn;
+#endif
 }
 
 /*
@@ -136,10 +166,40 @@ VALUE
 rb_ldap_entry_get_values (VALUE self, VALUE attr)
 {
   RB_LDAPENTRY_DATA *edata;
+#if RUBY_VERSION_CODE < 190
+  char *c_attr;
+  struct berval **c_vals;
+  int i;
+  int count;
+  VALUE vals;
+#endif
 
   GET_LDAPENTRY_DATA (self, edata);
+#if RUBY_VERSION_CODE < 190
+  c_attr = StringValueCStr (attr);
 
+  c_vals = ldap_get_values_len (edata->ldap, edata->msg, c_attr);
+  if (c_vals)
+    {
+      vals = rb_ary_new ();
+      count = ldap_count_values_len (c_vals);
+      for (i = 0; i < count; i++)
+	{
+	  VALUE str;
+	  str = rb_tainted_str_new (c_vals[i]->bv_val, c_vals[i]->bv_len);
+	  rb_ary_push (vals, str);
+	}
+      ldap_value_free_len (c_vals);
+    }
+  else
+    {
+      vals = Qnil;
+    }
+
+  return vals;
+#else
   return rb_hash_aref(edata->attr, attr);
+#endif
 }
 
 /*
@@ -153,16 +213,41 @@ VALUE
 rb_ldap_entry_get_attributes (VALUE self)
 {
   RB_LDAPENTRY_DATA *edata;
+#if RUBY_VERSION_CODE < 190
+  VALUE vals;
+  char *attr;
+  BerElement *ber = NULL;
+#else
   VALUE attrs;
+#endif
 
   GET_LDAPENTRY_DATA (self, edata);
 
+#if RUBY_VERSION_CODE < 190
+  vals = rb_ary_new ();
+  for (attr = ldap_first_attribute (edata->ldap, edata->msg, &ber);
+       attr != NULL;
+       attr = ldap_next_attribute (edata->ldap, edata->msg, ber))
+    {
+      rb_ary_push (vals, rb_tainted_str_new2 (attr));
+      ldap_memfree(attr);
+    }
+
+    #if !defined(USE_OPENLDAP1)
+    if( ber != NULL ){
+      ber_free(ber, 0);
+    }
+    #endif
+
+  return vals;
+#else
   attrs = rb_funcall(edata->attr, rb_intern("keys"), 0);
   if (TYPE(attrs) != T_ARRAY) {
     return Qnil;
   }
 
   return attrs;
+#endif
 }
 
 /*
@@ -174,13 +259,33 @@ rb_ldap_entry_get_attributes (VALUE self)
 VALUE
 rb_ldap_entry_to_hash (VALUE self)
 {
+#if RUBY_VERSION_CODE < 190
+  VALUE attrs = rb_ldap_entry_get_attributes (self);
+  VALUE hash = rb_hash_new ();
+  VALUE attr, vals;
+  int i;
+#else
   RB_LDAPENTRY_DATA *edata;
   VALUE hash, dn_ary;
+#endif
 
+#if RUBY_VERSION_CODE < 190
+  Check_Type (attrs, T_ARRAY);
+  rb_hash_aset (hash, rb_tainted_str_new2 ("dn"),
+		rb_ary_new3 (1, rb_ldap_entry_get_dn (self)));
+  for (i = 0; i < RARRAY_LEN (attrs); i++)
+    {
+      attr = rb_ary_entry (attrs, i);
+      vals = rb_ldap_entry_get_values (self, attr);
+      rb_hash_aset (hash, attr, vals);
+    }
+#else
   GET_LDAPENTRY_DATA (self, edata);
   hash = rb_hash_dup(edata->attr);
   dn_ary = rb_ary_new3(1, edata->dn);
   rb_hash_aset(hash, rb_tainted_str_new2("dn"), dn_ary);
+#endif
+
   return hash;
 }
 

@@ -55,8 +55,10 @@ typedef struct rb_ldapentry_data
 {
   LDAP *ldap;
   LDAPMessage *msg;
+#if RUBY_VERSION_CODE >= 190
   VALUE dn;
   VALUE attr;
+#endif
 } RB_LDAPENTRY_DATA;
 
 typedef struct rb_ldapmod_data
@@ -171,9 +173,20 @@ VALUE rb_ldap_mod_vals (VALUE);
   }; \
 }
 
+#if RUBY_VERSION_CODE < 190
+#define GET_LDAPENTRY_DATA(obj,ptr) { \
+  Data_Get_Struct(obj, struct rb_ldapentry_data, ptr); \
+  if( ! ptr->msg ){ \
+    VALUE value = rb_inspect(obj); \
+    rb_raise(rb_eLDAP_InvalidEntryError, "%s is not a valid entry", \
+	     StringValuePtr(value)); \
+  }; \
+}
+#else
 #define GET_LDAPENTRY_DATA(obj,ptr) { \
   Data_Get_Struct(obj, struct rb_ldapentry_data, ptr); \
 }
+#endif
 
 #define GET_LDAPMOD_DATA(obj,ptr) {\
   Data_Get_Struct(obj, struct rb_ldapmod_data, ptr); \
