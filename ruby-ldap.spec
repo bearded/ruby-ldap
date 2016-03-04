@@ -5,7 +5,7 @@
 %define rdoc %( type rdoc > /dev/null && echo 1 || echo 0 )
 Summary: LDAP API (RFC1823) library module for Ruby.
 Name: ruby-ldap
-Version: 0.9.17
+Version: 0.9.18
 Release: 1
 License: Redistributable
 Group: Applications/Ruby
@@ -54,6 +54,11 @@ find $RPM_BUILD_ROOT -type f -print | \
 %doc example/ test/
 
 %changelog
+* Fri Mar  4 11:17:21 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.18-1
+- 0.9.18
+- backout issue32 to compile for ruby-1.8.x.
+  Thanks to SUENAGA Hiroki.
+
 * Fri Feb  6 08:51:09 UTC 2015 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.17-1
 - 0.9.17
 - Use ruby object to keep LDAP search result instead of libldap's data structure.
