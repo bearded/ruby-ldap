@@ -54,6 +54,11 @@ find $RPM_BUILD_ROOT -type f -print | \
 %doc example/ test/
 
 %changelog
+* Sun Apr 17 11:44:16 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.19-1
+- 0.9.19
+- replaced ldap_open() by ldap_init() in LDAP::Conn.open.
+  Thanks to Jon Mason (jjmason) for reporting (GH-37).
+
 * Fri Mar  4 11:17:21 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.18-1
 - 0.9.18
 - backout issue32 to compile for ruby-1.8.x.

@@ -160,7 +160,7 @@ rb_ldap_conn_s_open (int argc, VALUE argv[], VALUE klass)
       rb_bug ("rb_ldap_conn_new");
     };
 
-  cldap = ldap_open (chost, cport);
+  cldap = ldap_init (chost, cport);
   if (!cldap)
     rb_raise (rb_eLDAP_ResultError, "can't open an LDAP session");
   conn = rb_ldap_conn_new (klass, cldap);
