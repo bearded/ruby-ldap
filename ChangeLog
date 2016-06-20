@@ -1,3 +1,8 @@
+Mon Jun 20 14:30:52 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com>
+  * Version 0.9.19
+  * Fixed parsing of LDIF with CR LF line separators (GH-38).
+    Thanks to doppelreim.
+
 Fri Mar  4 11:17:21 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com>
   * Version 0.9.18
   * backout issue32 to compile for ruby-1.8.x.

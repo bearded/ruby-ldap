@@ -5,7 +5,7 @@
 %define rdoc %( type rdoc > /dev/null && echo 1 || echo 0 )
 Summary: LDAP API (RFC1823) library module for Ruby.
 Name: ruby-ldap
-Version: 0.9.18
+Version: 0.9.19
 Release: 1
 License: Redistributable
 Group: Applications/Ruby
@@ -54,6 +54,11 @@ find $RPM_BUILD_ROOT -type f -print | \
 %doc example/ test/
 
 %changelog
+* Mon Jun 20 14:30:52 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.19-1
+- 0.9.19
+- Fixed parsing of LDIF with CR LF line separators (GH-38).
+  Thanks to doppelreim.
+
 * Fri Mar  4 11:17:21 UTC 2016 Alexey Chebotar <alexey.chebotar@gmail.com> 0.9.18-1
 - 0.9.18
 - backout issue32 to compile for ruby-1.8.x.

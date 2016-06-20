@@ -185,28 +185,27 @@ module LDAP
       mod_type = nil
 
       lines.each do |line|
+        _line = line.chomp
         # Skip (continued) comments.
-        if line =~ /^#/ || ( comment && line[0..0] == ' ' )
+        if _line =~ /^#/ || ( comment && _line[0..0] == ' ' )
           comment = true
           next
         end
 
         # Skip blank lines.
-        next if line =~ /^$/
+        next if _line =~ /^$/
 
         # Reset mod type if this entry has more than one mod to make.
         # A '-' continuation is only valid if we've already had a
         # 'changetype: modify' line.
-        if line =~ /^-$/ && change_type == LDAP_MOD_REPLACE
+        if _line =~ /^-$/ && change_type == LDAP_MOD_REPLACE
           next
         end
-
-        line.chomp!
 
         # N.B. Attributes and values can be separated by one or two colons,
         # or one colon and a '<'. Either of these is then followed by zero
         # or one spaces.
-        if md = line.match( /^[^ ].*?((:[:<]?) ?)/ )
+        if md = _line.match( /^[^ ].*?((:[:<]?) ?)/ )
 
           # If previous value was Base64-encoded and is not continued,
           # we need to decode it now.
@@ -222,7 +221,7 @@ module LDAP
           end
 
           # Found a attr/value line.
-          attr, val = line.split( md[1], 2 )
+          attr, val = _line.split( md[1], 2 )
           attr.downcase!
 
           # Attribute must be ldap-oid / (ALPHA *(attr-type-chars))
@@ -331,21 +330,21 @@ module LDAP
           # continuation line must be indented. If a comment makes it this
           # far, that's also an error.
           #
-          if sep == ':' && line[0..0] != ' ' || comment
-            raise LDIFError, "Improperly continued line: #{line}"
+          if sep == ':' && _line[0..0] != ' ' || comment
+            raise LDIFError, "Improperly continued line: #{_line}"
           end
 
           # OK; this is a valid continuation line.
 
           # Append line except for initial space.
-          line[0] = '' if line[0..0] == ' '
+          _line[0] = '' if _line[0..0] == ' '
 
           if change_type == LDAP_MOD_REPLACE
             # Append to last value of current mod type.
-            mods[mod_type][attr][-1] << line
+            mods[mod_type][attr][-1] << _line
           else
             # Append to last value.
-            hash[attr][-1] << line
+            hash[attr][-1] << _line
           end
         end
 
