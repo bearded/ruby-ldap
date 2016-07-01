@@ -86,7 +86,7 @@ class TC_LDIFTest < Test::Unit::TestCase
     ldif = File.open( 'data/ldif12.txt' ) { |f| f.readlines }
     entry = LDAP::LDIF.parse_entry( ldif )
     assert( entry.mods.keys.include?( LDAP::LDAP_MOD_REPLACE |
-				      LDAP::LDAP_MOD_BVALUES ) )
+                                      LDAP::LDAP_MOD_BVALUES ) )
   end
 
   def test_change_record_control
@@ -109,9 +109,9 @@ class TC_LDIFTest < Test::Unit::TestCase
 
   def test_mod_to_ldif
     mod = LDAP.mod( LDAP::LDAP_MOD_ADD | LDAP::LDAP_MOD_BVALUES,
-		    'mailRoutingAddress', ['a', 'b'] )
+                    'mailRoutingAddress', ['a', 'b'] )
     assert_instance_of( LDAP::LDIF::Mod,
-		        mod.to_ldif( 'uid=foo,dc=example,dc=com' ) )
+                        mod.to_ldif( 'uid=foo,dc=example,dc=com' ) )
     assert_equal( <<LDIF, mod.to_ldif( 'uid=foo,dc=example,dc=com' ) )
 dn: uid=foo,dc=example,dc=com
 changetype: add
@@ -120,7 +120,7 @@ mailRoutingAddress: b
 LDIF
 
     mod = LDAP.mod( LDAP::LDAP_MOD_REPLACE | LDAP::LDAP_MOD_BVALUES,
-		    'mailRoutingAddress', ['a', 'b'] )
+                    'mailRoutingAddress', ['a', 'b'] )
     assert_equal( <<LDIF, mod.to_ldif( 'uid=foo,dc=example,dc=com' ) )
 dn: uid=foo,dc=example,dc=com
 changetype: modify

@@ -120,5 +120,4 @@ class TC_ConnectionTest < TC_LDAPTest
     @@conn = nil
   end
 
-
 end

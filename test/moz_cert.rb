@@ -6,8 +6,8 @@ require 'optparse'
 require 'pp'
 
 options = {
-  :host	  => 'localhost',
-  :port	  => '389',
+  :host   => 'localhost',
+  :port   => '389',
   :scope  => 'base',
   :filter => '(objectclass=*)',
   :key_pw => ''
@@ -15,44 +15,44 @@ options = {
 
 optparse = OptionParser.new do |opts|
   opts.on("-P", "--certpath [CERTFILE]", "cert8 path") do |cp|
-	options[:cp] = cp
+    options[:cp] = cp
   end
 
   opts.on("-N", "--certname [CERTNAME]", "certificate name") do |opt|
-	options[:cn] = opt
+    options[:cn] = opt
   end
 
   opts.on("-W", "--keypassword PASSWORD", "key password") do |opt|
-	options[:key_pw] = opt
+    options[:key_pw] = opt
   end
 
   opts.on("-h", "--host HOST", "server hostname") do |host|
-	options[:host] = host
+    options[:host] = host
   end
 
   opts.on("-p", "--port PORT", "server port") do |opt|
-	options[:port] = opt
+    options[:port] = opt
   end
 
   opts.on("-b", "--base [BASE]", "search base") do |opt|
-	options[:base] = opt
+    options[:base] = opt
   end
 
   opts.on("-s", "--scope SCOPE", "search scope") do |opt|
-	options[:scope] = opt
+    options[:scope] = opt
   end
 
   opts.on("-f", "--filter FILTER", "search filter") do |opt|
-	options[:filter] = opt
+    options[:filter] = opt
   end
 
   opts.on("-a", "--attributes ATTRS", "attrs to return") do |opt|
-	options[:attrs] = opt.split(/ *, */)
+    options[:attrs] = opt.split(/ *, */)
   end
 
   opts.on("--help") do |opt|
-	puts opts
-	exit 0
+    puts opts
+    exit 0
   end
 end
 
@@ -80,7 +80,7 @@ raise ArgumentError.new("cert file's missing") unless (File.exists? options[:cp]
 
 # Connect
 conn = LDAP::SSLAuthConn.new(options[:host], options[:port].to_i, true, 
-			    File.expand_path(options[:cp]), options[:cn], options[:key_pw])
+                File.expand_path(options[:cp]), options[:cn], options[:key_pw])
 conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
 
 
@@ -93,7 +93,7 @@ begin
 
   results = {}
   conn.search(options[:base], options[:scope], options[:filter], options[:attrs], false, 10) do |entry|
-	results[entry.dn] = entry.to_hash
+    results[entry.dn] = entry.to_hash
   end
 
   pp results

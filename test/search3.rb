@@ -13,7 +13,7 @@ conn.bind{
   # search2 returns an array of hash
   print("search2 without a block:\n")
   conn.search2("dc=localhost, dc=localdomain", LDAP::LDAP_SCOPE_SUBTREE,
-	       "(objectclass=*)", nil, false, 0, 0).each{|ent|
+               "(objectclass=*)", nil, false, 0, 0).each{|ent|
     ent.each{|attr,vals|
       print("#{attr}: #{vals.join(', ')}\n")
     }
