@@ -9,8 +9,8 @@ LDAP::Conn.new($HOST, $PORT).bind{|conn|
   conn.perror("bind")
   begin
     conn.search("dc=localhost, dc=localdomain",
-		LDAP::LDAP_SCOPE_SUBTREE,
-		"(objectclass=*)"){|e|
+                LDAP::LDAP_SCOPE_SUBTREE,
+                "(objectclass=*)"){|e|
       p e.vals("cn")
       p e.to_hash()
     }

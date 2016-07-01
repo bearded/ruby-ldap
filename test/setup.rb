@@ -18,9 +18,9 @@ class TC_LDAPTest < Test::Unit::TestCase
           if line =~ /^host\s+(\S+)$/
             @@host = $1
             break
-	  elsif line =~ /^base\s+(\S+)$/
-	    @@base = $1
-	    break
+          elsif line =~ /^base\s+(\S+)$/
+            @@base = $1
+            break
           end
         end
       end

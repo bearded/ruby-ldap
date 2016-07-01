@@ -9,7 +9,7 @@ LDAP::Conn.new($HOST, $PORT).bind{|conn|
   conn.perror("bind")
   begin
     conn.compare("cn=Takaaki Tateishi, dc=localhost, dc=localdomain",
-		 "cn", "Takaaki Tateishi")
+                 "cn", "Takaaki Tateishi")
   rescue LDAP::ResultError
     exit(0)
   end

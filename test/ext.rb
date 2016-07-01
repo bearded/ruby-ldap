@@ -11,9 +11,9 @@ conn.bind('cn=root, dc=localhost, dc=localdomain','secret'){
   begin
     (1..200).each{|i|
       entry = {
-	'objectclass' => ['top', 'person'],
-	'cn'          => ["User #{i}"],
-	'sn'          => ["user#{i}"],
+        'objectclass' => ['top', 'person'],
+        'cn'          => ["User #{i}"],
+        'sn'          => ["user#{i}"],
       }
       conn.add("cn=User #{i}, dc=localhost, dc=localdomain", entry)
     }
@@ -30,12 +30,12 @@ conn.bind('cn=root, dc=localhost, dc=localdomain','secret'){
   users = []
   begin
     conn.search_ext("dc=localhost, dc=localdomain",
-		    LDAP::LDAP_SCOPE_SUBTREE,
-		    "(&(objectclass=*)(cn=User*))",
-		    nil, false,    # attrs, attrsonly
-		    nil, nil,      # serverctrls, clientctrls
-		    0, 0,          # sec, usec
-		    100){|e|       # sizelimit
+                    LDAP::LDAP_SCOPE_SUBTREE,
+                    "(&(objectclass=*)(cn=User*))",
+                    nil, false,    # attrs, attrsonly
+                    nil, nil,      # serverctrls, clientctrls
+                    0, 0,          # sec, usec
+                    100){|e|       # sizelimit
       users.push(e.vals("sn"))
     }
   rescue LDAP::ResultError

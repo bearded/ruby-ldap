@@ -11,7 +11,7 @@ when /^OpenLDAP/i
   conn = LDAP::SSLConn.new($HOST, $PORT, true)
 when /^Netscape/i
   conn = LDAP::SSLConn.new($HOST, $SSLPORT,
-			   false, File.expand_path("~/.netscape/cert7.db"))
+                           false, File.expand_path("~/.netscape/cert7.db"))
   conn.set_option(LDAP::LDAP_OPT_PROTOCOL_VERSION, 3)
 else
   raise(RuntimeError, "unknown vendor")

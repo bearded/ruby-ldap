@@ -14,8 +14,8 @@ rescue LDAP::ResultError => e
   conn.bind('cn=root, dc=localhost, dc=localdomain','secret'){
     conn.perror("bind")
     conn.modrdn("cn=Takaaki Tateishi, dc=localhost, dc=localdomain",
-		"cn=Takaaki-Tateishi",
-		true)
+                "cn=Takaaki-Tateishi",
+                true)
     conn.perror("modrdn")
   }
   exit(0)

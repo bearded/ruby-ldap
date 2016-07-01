@@ -16,17 +16,17 @@ class TC_SearchTest < TC_LDAPTest
   def test_attrs
     assert_raise( TypeError ) do
       @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		     '(objectClass=*)', false )
+                     '(objectClass=*)', false )
     end
 
     @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		   '(objectClass=*)', [], true ) do |x|
+                   '(objectClass=*)', [], true ) do |x|
       assert_nil( x['objectClass'] )
       break
     end
 
     @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		   '(objectClass=*)', 'objectClass' ) do |x|
+                   '(objectClass=*)', 'objectClass' ) do |x|
       x = x.to_hash
       x.delete( 'dn' )
       assert( x.to_hash.keys == [ 'objectClass' ] )
@@ -39,14 +39,14 @@ class TC_SearchTest < TC_LDAPTest
   def test_sort_attr
     ou = []
     @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		   '(ou=*)' ) do |x|
+                   '(ou=*)' ) do |x|
       ou << x['ou']
     end
     ou.flatten!
 
     sorted_ou = []
     @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		   '(ou=*)', nil, nil, 0, 0, 'ou' ) do |x|
+                   '(ou=*)', nil, nil, 0, 0, 'ou' ) do |x|
       sorted_ou << x['ou']
     end
     sorted_ou.flatten!
@@ -60,7 +60,7 @@ class TC_SearchTest < TC_LDAPTest
   def test_sort_proc
     ct = []
     @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		   '(objectClass=*)', [ 'createTimestamp' ] ) do |x|
+                   '(objectClass=*)', [ 'createTimestamp' ] ) do |x|
       ct << x['createTimestamp']
     end
     ct.flatten!
@@ -68,8 +68,8 @@ class TC_SearchTest < TC_LDAPTest
     sorted_ct = []
     s_proc = proc { |a,b| b <=> a }
     @@conn.search( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-		   '(objectClass=*)', [ 'createTimestamp' ], nil, 0, 0,
-		   'createTimestamp', s_proc ) do |x|
+                   '(objectClass=*)', [ 'createTimestamp' ], nil, 0, 0,
+                   'createTimestamp', s_proc ) do |x|
       sorted_ct << x['createTimestamp']
     end
     sorted_ct.flatten!
@@ -88,20 +88,20 @@ class TC_SearchTest < TC_LDAPTest
     loop do
       ber_string = LDAP::Control.encode( page_size, cookie )
       ctrl = LDAP::Control.new( LDAP::LDAP_CONTROL_PAGEDRESULTS,
-			        ber_string,
-				true )
+                                ber_string,
+                                true )
       @@conn.set_option( LDAP::LDAP_OPT_SERVER_CONTROLS, [ ctrl ] )
 
       this_page = nil
       assert_nothing_raised do
-	begin
+        begin
           this_page = @@conn.search2( @@naming_context,
-				      LDAP::LDAP_SCOPE_ONELEVEL,
-				      '(objectclass=*)' )
-	rescue LDAP::ResultError
-	  @@conn = nil
-	  raise
-	end
+                                      LDAP::LDAP_SCOPE_ONELEVEL,
+                                      '(objectclass=*)' )
+        rescue LDAP::ResultError
+          @@conn = nil
+          raise
+        end
       end
       total += this_page.size
       assert_equal( page_size, this_page.size )
@@ -126,7 +126,7 @@ class TC_SearchTest < TC_LDAPTest
     setup
 
     unpaged = @@conn.search2( @@naming_context, LDAP::LDAP_SCOPE_ONELEVEL,
-			      '(objectclass=*)' )
+                              '(objectclass=*)' )
 
     # Does the total number of results match the equivalent unpaged search?
     # This has a race condition, but we assume the number of top-level OUs is

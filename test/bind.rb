@@ -20,7 +20,7 @@ conn.bind{
       info = nil
     end
     print("host = #{host}, proto = #{proto}\n",
-  	  "info.protocol_version = #{info.protocol_version}\n")
+          "info.protocol_version = #{info.protocol_version}\n")
   end
 }
 

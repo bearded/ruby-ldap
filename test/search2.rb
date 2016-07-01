@@ -14,7 +14,7 @@ LDAP::Conn.new($HOST, $PORT).bind{|conn|
   conn.perror("bind")
   sub = nil
   conn.search("dc=localhost, dc=localdomain", LDAP::LDAP_SCOPE_SUBTREE,
-	      "(objectclass=*)", nil, false, 0, 0, "sn", sorter){|e|
+              "(objectclass=*)", nil, false, 0, 0, "sn", sorter){|e|
     dn = e.dn
     print("# #{LDAP.dn2ufn(dn)}\n")
     print("dn: #{dn}\n")
@@ -29,6 +29,6 @@ LDAP::Conn.new($HOST, $PORT).bind{|conn|
     sub.dn
   rescue LDAP::InvalidEntryError => e
     $stderr.print("#{e.to_s}.\n",
-		  "This exception is expected.\n")
+                  "This exception is expected.\n")
   end
 }

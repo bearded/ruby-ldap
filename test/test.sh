@@ -21,12 +21,12 @@ SCRIPTS="$TEST/bind.rb \
          $TEST/search.rb \
          $TEST/search2.rb \
          $TEST/search3.rb \
-	 $TEST/search4.rb \
-	 $TEST/search5.rb \
+         $TEST/search4.rb \
+         $TEST/search5.rb \
          $TEST/modrdn.rb \
          $TEST/search2.rb \
          $TEST/delete.rb \
-	 $TEST/search2.rb \
+         $TEST/search2.rb \
          $TEST/compare.rb \
          $TEST/ext.rb \
          $TEST/misc1.rb \
@@ -95,7 +95,7 @@ case "$2" in
 'newcert')
   openssl req -new -x509 -out ./test-db/server.pem \
           -nodes -keyout ./test-db/server.pem \
-	  -config $TEST/openssl/openssl.cnf
+          -config $TEST/openssl/openssl.cnf
   exit 0
   ;;
 *)
