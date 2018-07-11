@@ -496,6 +496,9 @@ Init_ldap ()
 #ifdef LDAP_OPT_X_TLS_RANDOM_FILE
   rb_ldap_define_opt (LDAP_OPT_X_TLS_RANDOM_FILE);
 #endif
+#ifdef LDAP_OPT_X_TLS_NEWCTX
+  rb_ldap_define_opt (LDAP_OPT_X_TLS_NEWCTX);
+#endif
 #ifdef LDAP_OPT_X_TLS_NEVER
   rb_ldap_define_opt (LDAP_OPT_X_TLS_NEVER);
 #endif
