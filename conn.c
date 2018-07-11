@@ -502,6 +502,9 @@ rb_ldap_conn_set_option (VALUE self, VALUE opt, VALUE data)
 #ifdef LDAP_OPT_X_TLS_REQUIRE_CERT
     case LDAP_OPT_X_TLS_REQUIRE_CERT:
 #endif
+#ifdef LDAP_OPT_X_TLS_NEWCTX
+    case LDAP_OPT_X_TLS_NEWCTX:
+#endif
 #endif
       idata = NUM2INT (data);
       optdata = &idata;
