@@ -205,3 +205,14 @@ VALUE rb_ldap_mod_vals (VALUE);
         rb_define_method(rb_cLDAP_Mod,method,cfunc,argc)
 
 #endif
+
+#if RUBY_VERSION_CODE >= 270
+# if defined rb_tainted_str_new
+#  undef rb_tainted_str_new
+# endif
+# if defined rb_tainted_str_new2
+#  undef rb_tainted_str_new2
+# endif
+# define rb_tainted_str_new(p,l)	rb_str_new((p),(l))
+# define rb_tainted_str_new2(p)		rb_str_new_cstr((p))
+#endif
