@@ -1855,7 +1855,13 @@ Init_ldap_conn ()
 {
   rb_ldap_sort_obj = Qnil;
 
+#if RUBY_VERSION_CODE >= 300
+  rb_cLDAP_Conn = rb_define_class_under (rb_mLDAP, "Conn", rb_cObject);
+  rb_undef_alloc_func (rb_cLDAP_Conn);
+#endif
+#if RUBY_VERSION_CODE < 300
   rb_cLDAP_Conn = rb_define_class_under (rb_mLDAP, "Conn", rb_cData);
+#endif
   rb_define_attr (rb_cLDAP_Conn, "referrals", 1, 0);
   rb_define_attr (rb_cLDAP_Conn, "controls", 1, 0);
   rb_define_attr (rb_cLDAP_Conn, "sasl_quiet", 1, 1);
