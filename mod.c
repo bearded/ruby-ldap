@@ -283,7 +283,7 @@ rb_ldap_mod_inspect (VALUE self)
   str = rb_str_new (0, strlen (c) + 10 + 16 + 1);	/* 10:tags 16:addr 1:nul */
   sprintf (RSTRING_PTR (str), "#<%s:0x%lx ", c, self);
 
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   RSTRING(str)->len = strlen (RSTRING_PTR (str));
 #else
   rb_str_set_len(str, strlen (RSTRING_PTR (str)));
@@ -336,10 +336,10 @@ void
 Init_ldap_mod ()
 {
   rb_cLDAP_Mod = rb_define_class_under (rb_mLDAP, "Mod", rb_cObject);
-#if RUBY_VERSION_CODE < 170
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10700
   rb_define_singleton_method (rb_cLDAP_Mod, "new", rb_ldap_class_new, -1);
 #endif
-#if RUBY_VERSION_CODE >= 173
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10703
   rb_define_alloc_func (rb_cLDAP_Mod, rb_ldap_mod_s_allocate);
 #else
   rb_define_singleton_method (rb_cLDAP_Mod, "allocate",

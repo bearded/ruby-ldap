@@ -257,6 +257,12 @@ have_func("ldap_sasl_interactive_bind_s")
 
 $defs << "-DRUBY_VERSION_CODE=#{RUBY_VERSION.gsub(/\D/, '')}"
 
+def rb_ldap_rb_ver_code
+  ( _major, _minor, _teeny ) = RUBY_VERSION.split(/\D/)
+  _rvc = _major.to_i * 10000 + _minor.to_i * 100 + _teeny.to_i
+end
+$defs << "-DRB_LDAP_RVC=#{rb_ldap_rb_ver_code}"
+
 create_makefile("ldap")
 
 
