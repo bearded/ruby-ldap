@@ -55,7 +55,7 @@ typedef struct rb_ldapentry_data
 {
   LDAP *ldap;
   LDAPMessage *msg;
-#if RUBY_VERSION_CODE >= 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10900
   VALUE dn;
   VALUE attr;
 #endif
@@ -173,7 +173,7 @@ VALUE rb_ldap_mod_vals (VALUE);
   }; \
 }
 
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
 #define GET_LDAPENTRY_DATA(obj,ptr) { \
   Data_Get_Struct(obj, struct rb_ldapentry_data, ptr); \
   if( ! ptr->msg ){ \
@@ -204,4 +204,15 @@ VALUE rb_ldap_mod_vals (VALUE);
 #define rb_ldap_mod_define_method(method,cfunc,argc) \
         rb_define_method(rb_cLDAP_Mod,method,cfunc,argc)
 
+#endif
+
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 20700
+# if defined rb_tainted_str_new
+#  undef rb_tainted_str_new
+# endif
+# if defined rb_tainted_str_new2
+#  undef rb_tainted_str_new2
+# endif
+# define rb_tainted_str_new(p,l)	rb_str_new((p),(l))
+# define rb_tainted_str_new2(p)		rb_str_new_cstr((p))
 #endif

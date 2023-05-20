@@ -8,7 +8,7 @@
 
 VALUE rb_cLDAP_Entry;
 
-#if RUBY_VERSION_CODE >= 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10900
 static void
 rb_ldap_entry_mark(RB_LDAPENTRY_DATA *edata)
 {
@@ -88,11 +88,11 @@ rb_ldap_entry_new (LDAP * ldap, LDAPMessage * msg)
 {
   VALUE val;
   RB_LDAPENTRY_DATA *edata;
-#if RUBY_VERSION_CODE >= 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10900
   char *c_dn;
 #endif
 
-#if RUBY_VERSION_CODE >= 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10900
   val = Data_Make_Struct (rb_cLDAP_Entry, RB_LDAPENTRY_DATA,
 			  rb_ldap_entry_mark, rb_ldap_entry_free, edata);
 #else
@@ -102,7 +102,7 @@ rb_ldap_entry_new (LDAP * ldap, LDAPMessage * msg)
   edata->ldap = ldap;
   edata->msg = msg;
 
-#if RUBY_VERSION_CODE >= 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10900
   /* get dn */
   c_dn = ldap_get_dn(ldap, msg);
   if (c_dn) {
@@ -128,14 +128,14 @@ VALUE
 rb_ldap_entry_get_dn (VALUE self)
 {
   RB_LDAPENTRY_DATA *edata;
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   char *cdn;
   VALUE dn;
 #endif
 
   GET_LDAPENTRY_DATA (self, edata);
 
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   cdn = ldap_get_dn (edata->ldap, edata->msg);
   if (cdn)
     {
@@ -166,7 +166,7 @@ VALUE
 rb_ldap_entry_get_values (VALUE self, VALUE attr)
 {
   RB_LDAPENTRY_DATA *edata;
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   char *c_attr;
   struct berval **c_vals;
   int i;
@@ -175,7 +175,7 @@ rb_ldap_entry_get_values (VALUE self, VALUE attr)
 #endif
 
   GET_LDAPENTRY_DATA (self, edata);
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   c_attr = StringValueCStr (attr);
 
   c_vals = ldap_get_values_len (edata->ldap, edata->msg, c_attr);
@@ -213,7 +213,7 @@ VALUE
 rb_ldap_entry_get_attributes (VALUE self)
 {
   RB_LDAPENTRY_DATA *edata;
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   VALUE vals;
   char *attr;
   BerElement *ber = NULL;
@@ -223,7 +223,7 @@ rb_ldap_entry_get_attributes (VALUE self)
 
   GET_LDAPENTRY_DATA (self, edata);
 
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   vals = rb_ary_new ();
   for (attr = ldap_first_attribute (edata->ldap, edata->msg, &ber);
        attr != NULL;
@@ -259,7 +259,7 @@ rb_ldap_entry_get_attributes (VALUE self)
 VALUE
 rb_ldap_entry_to_hash (VALUE self)
 {
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   VALUE attrs = rb_ldap_entry_get_attributes (self);
   VALUE hash = rb_hash_new ();
   VALUE attr, vals;
@@ -269,7 +269,7 @@ rb_ldap_entry_to_hash (VALUE self)
   VALUE hash, dn_ary;
 #endif
 
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   Check_Type (attrs, T_ARRAY);
   rb_hash_aset (hash, rb_tainted_str_new2 ("dn"),
 		rb_ary_new3 (1, rb_ldap_entry_get_dn (self)));
@@ -305,7 +305,7 @@ rb_ldap_entry_inspect (VALUE self)
   str = rb_str_new (0, strlen (c) + 10 + 16 + 1);	/* 10:tags 16:addr 1:nul */
   sprintf (RSTRING_PTR (str), "#<%s:0x%lx\n", c, self);
 
-#if RUBY_VERSION_CODE < 190
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10900
   RSTRING(str)->len = strlen (RSTRING_PTR (str));
 #else
   rb_str_set_len(str, strlen (RSTRING_PTR (str)));

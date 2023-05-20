@@ -131,7 +131,7 @@ rb_ldap_control_s_allocate (VALUE klass)
   return Data_Wrap_Struct (klass, 0, rb_ldap_control_free, ctl);
 }
 
-#if RUBY_VERSION_CODE < 170
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10700
 static VALUE
 rb_ldap_control_s_new (int argc, VALUE argv[], VALUE klass)
 {
@@ -479,11 +479,11 @@ Init_ldap_misc ()
 
 #ifdef HAVE_LDAPCONTROL
   rb_cLDAP_Control = rb_define_class_under (rb_mLDAP, "Control", rb_cObject);
-#if RUBY_VERSION_CODE < 170
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC < 10700
   rb_define_singleton_method (rb_cLDAP_Control, "new",
                              rb_ldap_control_s_new, -1);
 #endif
-#if RUBY_VERSION_CODE >= 173
+#if defined(RB_LDAP_RVC) && RB_LDAP_RVC >= 10703
   rb_define_alloc_func (rb_cLDAP_Control, rb_ldap_control_s_allocate);
 #else
   rb_define_singleton_method (rb_cLDAP_Control, "allocate",
